@@ -2,6 +2,12 @@
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.const import UnitOfTime
+from homeassistant.helpers import entity_platform
+from homeassistant.exceptions import HomeAssistantError
+try:
+    import probatio as vol
+except ImportError:
+    import voluptuous as vol
 
 from .entity import U1Entity
 
@@ -10,6 +16,10 @@ ICONS = {"inspection": "mdi:clipboard-check-outline", "motion": "mdi:axis-arrow"
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service("complete_maintenance", {
+        vol.Required("confirmed"): vol.All(bool, vol.In([True]))
+    }, "async_complete_maintenance")
     coordinator = entry.runtime_data
     async_add_entities([U1Hours(coordinator), U1Overall(coordinator),
                         *(U1Maintenance(coordinator, t) for t in coordinator.catalog["tasks"])])
@@ -67,6 +77,17 @@ class U1Overall(U1Entity, SensorEntity):
 
 
 class U1Maintenance(U1Entity, SensorEntity):
+    async def async_complete_maintenance(self, confirmed):
+        """Confirm the displayed procedure; record only this item for today."""
+        if confirmed is not True:
+            raise HomeAssistantError("Confirm completion of all procedure steps")
+        task = next(t for t in self.coordinator.catalog["tasks"] if t["id"] == self.task_id)
+        try:
+            await self.coordinator.async_complete(self.task_id, [True] * len(task["steps"]),
+                "Validé depuis le tableau de bord", self.coordinator.today())
+        except (OSError, ValueError, TypeError) as err:
+            raise HomeAssistantError("L’entretien n’a pas pu être enregistré") from err
+
     def __init__(self, coordinator, task):
         super().__init__(coordinator, task["id"])
         self.task_id = task["id"]

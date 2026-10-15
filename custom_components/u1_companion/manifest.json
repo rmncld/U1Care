@@ -1,7 +1,7 @@
 {
   "domain": "u1_companion",
   "name": "U1 Care",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "codeowners": [
     "@rmncld"
   ],

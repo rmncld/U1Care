@@ -103,7 +103,17 @@ class U1OptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         return self.async_show_menu(step_id="init", menu_options=[
-            "maintenance", "reference", "signal", "counters", "resume", "import_backup"])
+            "maintenance", "reference", "signal", "counters", "resume", "import_backup", "dashboard"])
+
+    async def async_step_dashboard(self, user_input=None):
+        if user_input is not None:
+            return self._finish()
+        from .dashboard_config import async_dashboard_config
+        config = await async_dashboard_config(self.hass, self.config_entry)
+        return self.async_show_form(step_id="dashboard", data_schema=vol.Schema({
+            vol.Optional("dashboard_json", default=json.dumps(config, ensure_ascii=False, indent=2)):
+                selector.TextSelector(selector.TextSelectorConfig(multiline=True))}),
+            description_placeholders={"path": f"u1-care-{self.config_entry.entry_id[:8].lower()}"})
 
     async def async_step_maintenance(self, user_input=None):
         if user_input:

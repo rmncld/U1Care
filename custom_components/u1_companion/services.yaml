@@ -1,0 +1,13 @@
+complete_maintenance:
+  name: Consigner un entretien réalisé
+  description: Valide aujourd’hui uniquement l’entretien ciblé, après confirmation de toutes les étapes. Aucun ordre envoyé à l’imprimante.
+  target:
+    entity:
+      integration: u1_companion
+      domain: sensor
+  fields:
+    confirmed:
+      name: Toutes les étapes effectuées
+      required: true
+      selector:
+        boolean:

@@ -40,7 +40,8 @@
           "signal": "Signaler un besoin de calibration XYZ",
           "counters": "Compteurs manuels de secours (facultatif)",
           "resume": "Reprendre la lecture automatique",
-          "import_backup": "Importer un ancien suivi (facultatif)"
+          "import_backup": "Importer un ancien suivi (facultatif)",
+          "dashboard": "Modèle de tableau de bord"
         }
       },
       "maintenance": {
@@ -97,6 +98,13 @@
         "data": {
           "backup_json": "Sauvegarde JSON",
           "confirm": "Je confirme le remplacement du suivi actuel"
+        }
+      },
+      "dashboard": {
+        "title": "Tableau de bord U1 Care",
+        "description": "Copier le contenu ci-dessous. Créer un tableau de bord vide, URL {path}, puis coller ce contenu dans son éditeur de configuration brute. Les entités sont déjà adaptées à cette U1. Ensuite, chacun peut modifier les cartes et choisir ce tableau de bord par défaut dans son profil. Le style utilise card-mod si installé.",
+        "data": {
+          "dashboard_json": "Configuration du tableau de bord"
         }
       }
     },

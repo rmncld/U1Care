@@ -1,0 +1,583 @@
+{
+  "views": [
+    {
+      "title": "U1 Care",
+      "path": "care",
+      "icon": "mdi:printer-3d",
+      "type": "sections",
+      "max_columns": 3,
+      "sections": [
+        {
+          "type": "grid",
+          "column_span": 3,
+          "cards": [
+            {
+              "type": "markdown",
+              "content": "<img src=\"https://raw.githubusercontent.com/rmncld/u1-care-home-assistant/33a94ccd10e20edd7abe6d681bc040e383723c19/assets/u1-care-mark.svg\" width=\"58\" alt=\"Logo U1 Care\">\n\n# U1 Care\n### Votre atelier, prêt pour la prochaine impression.\n**DÉMONSTRATION** · Dates et compteurs fictifs · Aucune U1 connectée",
+              "grid_options": {
+                "columns": "full"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { border-top: 4px solid #a3e635; padding: 8px 16px; text-align:center; }"
+              }
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Vue d’ensemble",
+              "icon": "mdi:clipboard-pulse-outline",
+              "heading_style": "title"
+            },
+            {
+              "type": "tile",
+              "entity": "__ENTITY_overall__",
+              "name": "Bilan des entretiens",
+              "icon": "mdi:clipboard-pulse-outline",
+              "vertical": false,
+              "tap_action": {
+                "action": "more-info"
+              },
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_overall__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; }"
+              }
+            },
+            {
+              "type": "tile",
+              "entity": "__ENTITY_hours__",
+              "name": "Heures · simulation",
+              "icon": "mdi:timer-outline",
+              "vertical": false,
+              "tap_action": {
+                "action": "more-info"
+              },
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_hours__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "{% set tasks = ['__ENTITY_guides__','__ENTITY_carbon__','__ENTITY_z__','__ENTITY_belts__','__ENTITY_coupling__','__ENTITY_pogo__','__ENTITY_xyz__'] %}{% set ns = namespace(due=0,soon=0,ok=0) %}{% for e in tasks %}{% set level=state_attr(e,'level') %}{% if level == 'due' %}{% set ns.due=ns.due+1 %}{% elif level == 'soon' %}{% set ns.soon=ns.soon+1 %}{% elif level == 'ok' %}{% set ns.ok=ns.ok+1 %}{% endif %}{% endfor %}\n## {{ ns.due }} à faire · {{ ns.soon }} bientôt\n**{{ ns.ok }} entretiens OK**\n\n🔴 DUE : échéance atteinte\n\n🟠 SOON : à prévoir prochainement\n\n🟢 OK : suivi à jour",
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; }"
+              }
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Axes & mouvement",
+              "icon": "mdi:axis-arrow",
+              "heading_style": "title"
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:axis-arrow\"></ha-icon> **Guidages & roulements**\n\n### {{ states('__ENTITY_guides__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-guides)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_guides__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:ray-start-end\"></ha-icon> **Tiges carbone X**\n\n### {{ states('__ENTITY_carbon__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-carbon)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_carbon__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:screw-machine-flat-top\"></ha-icon> **Vis & écrous Z**\n\n### {{ states('__ENTITY_z__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-z)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_z__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:rotate-3d-variant\"></ha-icon> **Courroies XY**\n\n### {{ states('__ENTITY_belts__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-belts)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_belts__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Têtes & précision",
+              "icon": "mdi:printer-3d-nozzle-outline",
+              "heading_style": "title"
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:circle-multiple-outline\"></ha-icon> **Goupilles & billes**\n\n### {{ states('__ENTITY_coupling__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-coupling)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_coupling__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:connection\"></ha-icon> **Contacts pogo**\n\n### {{ states('__ENTITY_pogo__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-pogo)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_pogo__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "markdown",
+              "content": "<ha-icon icon=\"mdi:target\"></ha-icon> **Calibration XYZ**\n\n### {{ states('__ENTITY_xyz__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-xyz)",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_xyz__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Configurer U1 Care",
+              "icon": "mdi:cog-outline",
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/config/integrations/integration/u1_companion"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Guidages & roulements",
+      "path": "procedure-guides",
+      "icon": "mdi:axis-arrow",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:axis-arrow\"></ha-icon> **Guidages & roulements**\n\n## {{ states('__ENTITY_guides__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_guides__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_guides__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_guides__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_guides__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_guides__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_guides__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_guides__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_guides__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Guidages & roulements » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Tiges carbone X",
+      "path": "procedure-carbon",
+      "icon": "mdi:ray-start-end",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:ray-start-end\"></ha-icon> **Tiges carbone X**\n\n## {{ states('__ENTITY_carbon__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_carbon__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_carbon__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_carbon__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_carbon__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_carbon__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_carbon__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_carbon__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_carbon__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Tiges carbone X » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Vis & écrous Z",
+      "path": "procedure-z",
+      "icon": "mdi:screw-machine-flat-top",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:screw-machine-flat-top\"></ha-icon> **Vis & écrous Z**\n\n## {{ states('__ENTITY_z__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_z__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_z__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_z__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_z__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_z__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_z__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_z__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_z__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Vis & écrous Z » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Courroies XY",
+      "path": "procedure-belts",
+      "icon": "mdi:rotate-3d-variant",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:rotate-3d-variant\"></ha-icon> **Courroies XY**\n\n## {{ states('__ENTITY_belts__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_belts__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_belts__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_belts__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_belts__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_belts__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_belts__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_belts__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_belts__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Courroies XY » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Goupilles & billes",
+      "path": "procedure-coupling",
+      "icon": "mdi:circle-multiple-outline",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:circle-multiple-outline\"></ha-icon> **Goupilles & billes**\n\n## {{ states('__ENTITY_coupling__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_coupling__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_coupling__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_coupling__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_coupling__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_coupling__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_coupling__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_coupling__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_coupling__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Goupilles & billes » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Contacts pogo",
+      "path": "procedure-pogo",
+      "icon": "mdi:connection",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:connection\"></ha-icon> **Contacts pogo**\n\n## {{ states('__ENTITY_pogo__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_pogo__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_pogo__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_pogo__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_pogo__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_pogo__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_pogo__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_pogo__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_pogo__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Contacts pogo » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Calibration XYZ",
+      "path": "procedure-xyz",
+      "icon": "mdi:target",
+      "subview": true,
+      "back_path": "/__DASHBOARD_PATH__/care",
+      "type": "sections",
+      "max_columns": 1,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "markdown",
+              "grid_options": {
+                "columns": "full"
+              },
+              "content": "<ha-icon icon=\"mdi:target\"></ha-icon> **Calibration XYZ**\n\n## {{ states('__ENTITY_xyz__') }}\n\n[↗ Guide officiel et illustrations]({{ state_attr('__ENTITY_xyz__', 'source') }})\n\n**Périodicité :** {{ state_attr('__ENTITY_xyz__', 'frequency') }}\n\n**Dernier entretien :** {{ (state_attr('__ENTITY_xyz__', 'lastDate') or 'Aucun événement enregistré')[:10] if state_attr('__ENTITY_xyz__', 'lastDate') else 'Aucun événement enregistré' }}\n\n**Échéance :** {{ state_attr('__ENTITY_xyz__', 'dueDate') or 'Selon condition ou compteur disponible' }}\n\n---\n\n### Procédure\n{% for step in state_attr('__ENTITY_xyz__', 'procedure') or [] %}\n{{ loop.index }}. {{ step }}\n{% endfor %}\n\n",
+              "card_mod": {
+                "style": "{% set level = state_attr('__ENTITY_xyz__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-markdown { --primary-text-color: #eef2f5; } ha-card { padding: 4px 6px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Valider l’entretien effectué",
+              "icon": "mdi:check-circle-outline",
+              "show_icon": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "u1_companion.complete_maintenance",
+                "target": {
+                  "entity_id": "__ENTITY_xyz__"
+                },
+                "data": {
+                  "confirmed": true
+                },
+                "confirmation": {
+                  "text": "Confirmer que toutes les étapes de « Calibration XYZ » ont été effectuées aujourd’hui ? Seul cet entretien sera mis à jour."
+                }
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { color: #a3e635; padding:12px; }"
+              }
+            },
+            {
+              "type": "button",
+              "name": "Retour aux entretiens",
+              "icon": "mdi:arrow-left",
+              "show_icon": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/__DASHBOARD_PATH__/care"
+              },
+              "card_mod": {
+                "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; } ha-card { padding: 12px; color: #a3e635; }"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
