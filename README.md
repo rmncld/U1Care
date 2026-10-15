@@ -8,6 +8,29 @@ Une intégration autonome : **Ajouter une intégration → U1 Care → IP de la 
 
 La connexion est directe entre Home Assistant et l’imprimante. Aucun PC à maintenir allumé, pont Companion, YAML, MQTT ou intervalle d’entretien à saisir.
 
+## Aperçu dans Home Assistant
+
+Captures du mode **démonstration** : les dates et compteurs sont fictifs, aucune imprimante n’est connectée.
+
+![Tableau de bord U1 Care : décomptes, états et liens vers les procédures](docs/images/u1-care-dashboard.png)
+
+<details>
+<summary>Voir les pages de procédure et de validation</summary>
+
+### Guidages et roulements
+
+![Procédure des guidages et roulements et validation de l’entretien](docs/images/u1-care-procedure-guidages.png)
+
+### Vis et écrous Z
+
+![Procédure des vis et écrous Z et validation de l’entretien](docs/images/u1-care-procedure-vis-z.png)
+
+### Calibration XYZ
+
+![Procédure conditionnelle de calibration XYZ et validation de l’entretien](docs/images/u1-care-procedure-calibration-xyz.png)
+
+</details>
+
 ## Installer depuis HACS
 
 [![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=u1-companion-home-assistant&category=integration)
