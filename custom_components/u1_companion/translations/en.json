@@ -1,0 +1,111 @@
+{
+  "title": "U1 Companion",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your U1",
+        "description": "Enter only the local IP address of your Snapmaker U1. Moonraker is checked automatically. No PC bridge or YAML is needed. Unknown maintenance dates remain unknown.",
+        "data": {
+          "host": "U1 IP address"
+        }
+      },
+      "auth": {
+        "title": "Printer authentication",
+        "description": "Moonraker requires an existing API key. The integration does not change printer firmware or disable authentication.",
+        "data": {
+          "api_key": "Moonraker API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Enter only a private LAN IPv4 address, for example 192.168.1.50.",
+      "cannot_connect": "Cannot reach the U1. Check its power, IP address and local network.",
+      "unsupported": "No usable Moonraker history was found on ports 80 or 7125.",
+      "invalid_auth": "Moonraker did not accept this API key."
+    },
+    "abort": {
+      "already_configured": "This IP is already configured. To change an existing address, use Reconfigure.",
+      "reconfigure_successful": "Connection updated. Maintenance records were preserved."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Your U1 maintenance",
+        "menu_options": {
+          "maintenance": "Record completed maintenance",
+          "reference": "Set a known commissioning date (optional)",
+          "signal": "Report an XYZ calibration need",
+          "counters": "Manual fallback counters (optional)",
+          "resume": "Resume automatic history readings",
+          "import_backup": "Import existing records (optional)"
+        }
+      },
+      "maintenance": {
+        "title": "Which maintenance did you complete?",
+        "description": "Each maintenance item has its own last event and next deadline. Intervals come from the official catalogue.",
+        "data": {
+          "task_id": "Maintenance item"
+        }
+      },
+      "complete": {
+        "title": "{task}",
+        "description": "{procedure}\n\n[Official illustrations and precautions]({source})\n\nCheck every step actually performed, then confirm the real completion date. Only this maintenance item is updated. Backdated work is not assigned current counters.",
+        "data": {
+          "completed_day": "Actual maintenance date",
+          "step_1": "Step 1 completed",
+          "step_2": "Step 2 completed",
+          "step_3": "Step 3 completed",
+          "step_4": "Step 4 completed",
+          "note": "Note (optional)"
+        }
+      },
+      "reference": {
+        "title": "Initial reference (optional)",
+        "description": "Provide the commissioning date only if known. It is used for maintenance without a recorded event and does not certify an intervention. Existing maintenance events take precedence.",
+        "data": {
+          "start_date": "Known commissioning date"
+        }
+      },
+      "signal": {
+        "title": "XYZ calibration",
+        "description": "Report a calibration need after hotend/toolhead replacement, a bump, blob removal or visible multicolour misalignment. Record calibration after completing it.",
+        "data": {
+          "active": "XYZ calibration is needed"
+        }
+      },
+      "counters": {
+        "title": "Fallback counters",
+        "description": "Optional: total toolhead swaps can be read from the U1 screen. They are never inferred from hours. Leave unused fields blank. Entering hours enables manual fallback; Resume automatic readings switches back. No intervals are required.",
+        "data": {
+          "swaps": "Total toolhead swaps (U1 screen)",
+          "hours": "Total hours (manual fallback)"
+        }
+      },
+      "resume": {
+        "title": "Resume Moonraker readings",
+        "description": "Resume direct polling. If retained history was reset, accept the new counter as a new reference. Previous hour references are preserved separately. Dates and maintenance events remain intact.",
+        "data": {
+          "confirm": "Resume readings and accept a new counter reference if necessary"
+        }
+      },
+      "import_backup": {
+        "title": "Import maintenance records",
+        "description": "Optional. Paste a Companion 0.2.0 JSON export, or integration diagnostics containing maintenance_backup. This replaces current records after saving a local backup. The current IP and credentials are not changed. Backup notes may contain private information.",
+        "data": {
+          "backup_json": "JSON backup",
+          "confirm": "Replace the current maintenance records"
+        }
+      }
+    },
+    "error": {
+      "check_all_steps": "Check all completed procedure steps before saving.",
+      "invalid_date": "Invalid date, future date, or date earlier than the last recorded maintenance.",
+      "invalid_note": "The note must contain at most 2,000 characters.",
+      "save_failed": "Could not save. No new maintenance event was applied.",
+      "invalid_counter": "Enter at least one valid counter without decreasing its previous value. Toolhead swaps must be integers.",
+      "confirm_required": "Confirm this operation to continue.",
+      "invalid_backup": "Invalid backup or incompatible catalogue. Current records were kept."
+    }
+  }
+}
