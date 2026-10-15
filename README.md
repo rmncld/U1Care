@@ -1,97 +1,126 @@
-# U1 Care pour Home Assistant · 0.3.6
+# U1 Care
 
-**Logo U1 Care inclus localement** dans la fiche d’intégration, sans configuration.
+**Le suivi d’entretien de la Snapmaker U1, dans Home Assistant et sur Stream Deck.**
 
-**Nouveau : tableau de bord automatique.** Après l’ajout d’une U1 (ou Démonstration), son tableau de bord apparaît dans la barre latérale sans import. Il reste modifiable avec l’éditeur Home Assistant ; les mises à jour préservent les personnalisations. Les entrées existantes en bénéficient au redémarrage après mise à jour. [Détails et limites](DASHBOARD.md).
+U1 Care permet de savoir quel entretien prévoir, de retrouver sa procédure et de garder une trace de ce qui a été fait. Les périodicités disponibles viennent de la documentation Snapmaker : il n’y a pas à saisir chaque intervalle à la main.
 
-Une intégration autonome : **Ajouter une intégration → U1 Care → IP de la U1**.
+Chaque entretien a sa propre date de réalisation et sa prochaine échéance. Valider les courroies, par exemple, ne remet pas à zéro les guidages ou les contacts des têtes.
 
-La connexion est directe entre Home Assistant et l’imprimante. Aucun PC à maintenir allumé, pont Companion, YAML, MQTT ou intervalle d’entretien à saisir.
+## Dans Home Assistant
 
-## Aperçu dans Home Assistant
+Après l’ajout de la U1, un tableau de bord se crée automatiquement dans la barre latérale. Il rassemble les jours ou les cycles restants, l’état des entretiens et les liens vers leurs procédures.
 
-Captures du mode **démonstration** : les dates et compteurs sont fictifs, aucune imprimante n’est connectée.
+- **OK** : le suivi est à jour.
+- **SOON** : l’entretien approche.
+- **DUE** : l’échéance est atteinte ou dépassée.
+- **INCONNU** : une date ou un compteur manque pour calculer l’échéance.
+- **SI BESOIN** : l’intervention dépend d’une situation particulière.
 
-![Tableau de bord U1 Care : décomptes, états et liens vers les procédures](docs/images/u1-care-dashboard.png)
+Les cases restent compactes. Le lien **Voir la procédure** ouvre le détail, la référence officielle et le bouton **Valider l’entretien effectué**. La validation met à jour uniquement l’entretien concerné et reste enregistrée après un redémarrage de Home Assistant.
+
+Le tableau de bord peut ensuite être modifié avec l’éditeur habituel de Home Assistant. Les mises à jour d’U1 Care préservent ses personnalisations. [En savoir plus sur le tableau de bord](DASHBOARD.md).
+
+![Tableau de bord U1 Care : états, décomptes et accès aux procédures](docs/images/u1-care-dashboard.png)
+
+*Ces captures montrent le mode démonstration : les dates et les compteurs sont fictifs.*
 
 <details>
-<summary>Voir les pages de procédure et de validation</summary>
+<summary>Voir quelques pages de procédure</summary>
 
 ### Guidages et roulements
 
-![Procédure des guidages et roulements et validation de l’entretien](docs/images/u1-care-procedure-guidages.png)
+![Procédure des guidages et roulements](docs/images/u1-care-procedure-guidages.png)
 
 ### Vis et écrous Z
 
-![Procédure des vis et écrous Z et validation de l’entretien](docs/images/u1-care-procedure-vis-z.png)
+![Procédure des vis et écrous Z](docs/images/u1-care-procedure-vis-z.png)
 
 ### Calibration XYZ
 
-![Procédure conditionnelle de calibration XYZ et validation de l’entretien](docs/images/u1-care-procedure-calibration-xyz.png)
+![Procédure de calibration XYZ](docs/images/u1-care-procedure-calibration-xyz.png)
 
 </details>
 
-## Installer depuis HACS
+### Installation avec HACS
 
-[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=u1-companion-home-assistant&category=integration)
+**Home Assistant 2026.8.2 minimum.**
 
-1. Cliquer sur **Ouvrir dans HACS**, confirmer le dépôt personnalisé puis télécharger **U1 Care**.
-2. Redémarrer Home Assistant pour charger les fichiers installés.
-3. Ouvrir **Paramètres → Appareils et services → Ajouter une intégration → U1 Care**.
-4. Entrer l’IP locale de la U1, par exemple `192.168.1.50`.
+[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=u1-care-home-assistant&category=integration)
 
-Si le lien ne s’ouvre pas : **HACS → menu ⋮ → Dépôts personnalisés**, ajouter `https://github.com/rmncld/u1-companion-home-assistant`, catégorie **Intégration**, puis télécharger U1 Care.
+1. Ouvrir le lien HACS, ajouter le dépôt personnalisé et télécharger **U1 Care**.
+2. Redémarrer Home Assistant.
+3. Aller dans **Paramètres → Appareils et services → Ajouter une intégration → U1 Care**.
+4. Renseigner l’adresse IP locale de la U1.
 
-Home Assistant minimum : **2026.8.2** ; tests sur **2026.8.2** et **2026.10.1**. Le nom visible est **U1 Care**. L’identifiant interne `u1_companion` et l’URL GitHub sont conservés pour préserver les installations et liens existants. L’intégration est indépendante de Snapmaker et de Home Assistant. Elle est distribuée comme dépôt personnalisé HACS ; elle n’est pas annoncée comme incluse au catalogue HACS par défaut.
+Si le lien ne fonctionne pas, ajouter `https://github.com/rmncld/u1-care-home-assistant` dans **HACS → menu ⋮ → Dépôts personnalisés**, catégorie **Intégration**.
 
-### Mise à jour
+La connexion se fait directement depuis Home Assistant. Aucun ordinateur supplémentaire n’a besoin de rester allumé. Si l’accès de l’imprimante exige une clé API, U1 Care la demande dans un second écran.
 
-HACS suit le dépôt et propose les versions publiées. Une mise à jour des fichiers ne réinitialise pas le stockage des entretiens dans Home Assistant. Après mise à jour, redémarrer Home Assistant si HACS le demande.
+Un **mode démonstration** permet de découvrir le tableau de bord sans posséder de U1 ni renseigner d’adresse IP réelle.
 
-### Installation manuelle de secours
+Pour une installation manuelle, copier le dossier `custom_components/u1_companion` dans `/config/custom_components/`, puis redémarrer Home Assistant.
 
-Copier `custom_components/u1_companion` dans `/config/custom_components/`, puis redémarrer Home Assistant. Si la version 0.3.0 est déjà installée, sauvegarder Home Assistant et ajouter le dépôt dans HACS ; le domaine `u1_companion`, l’entrée existante et les identifiants sont conservés. Ne pas supprimer l’entrée d’intégration pour faire la mise à jour.
+### Dates et suivi
 
-## Voir les informations
+Une date d’entretien déjà réalisé ne peut pas être devinée à partir de l’adresse IP. Si elle manque, l’état reste **INCONNU**. Il est possible de renseigner une date de mise en service une seule fois dans **Configurer → Date de mise en service**. Les entretiens enregistrés ensuite conservent leur propre date.
 
-L’ajout crée un appareil et **dix entités** :
+Le préavis **SOON** est un réglage de l’application, fixé par défaut à sept jours. Il ne remplace pas la périodicité indiquée par Snapmaker.
 
-- sept entretiens, avec un état lisible tel que `OK · 26 j`, `SOON · 2000 cy`, `DUE · -5 j`, `INCONNU` ou `SI BESOIN` ;
-- le bilan de maintenance général ;
-- les heures de l’historique Moonraker ;
-- la connexion U1.
+### Mises à jour et sauvegardes
 
-Cliquer sur l’appareil dans la fiche de l’intégration pour voir les entités. Elles peuvent être ajoutées à votre tableau de bord avec les outils habituels de Home Assistant, sans YAML. Chaque entretien expose sa source, sa procédure résumée, sa date précédente, sa prochaine échéance, ses décomptes et le nombre d’événements enregistrés.
+Les mises à jour se téléchargent depuis HACS. Elles conservent le suivi existant ; il suffit de redémarrer Home Assistant lorsque cela est demandé. Ne pas supprimer l’intégration pour la mettre à jour.
 
-## Après un entretien
+Le suivi est inclus dans les sauvegardes Home Assistant. Une copie peut aussi être récupérée avec **Télécharger les diagnostics** dans le menu de l’intégration. La partie `maintenance_backup` contient les entretiens et leurs notes, sans l’adresse réseau ni la clé API. Elle peut être restaurée via **Configurer → Importer un ancien suivi**.
 
-Dans la fiche de l’intégration, cliquer sur **Configurer → Consigner un entretien réalisé**. Choisir l’entretien, lire les étapes et le lien officiel, puis cocher les étapes effectuées et valider sa date réelle. Seul cet entretien est mis à jour. Les événements sont conservés dans le stockage de Home Assistant.
+Pour changer d’adresse IP ou de clé API, utiliser **Reconfigurer** dans le menu de l’intégration. Les entretiens sont conservés.
 
-L’IP ne permet pas de connaître une date d’entretien non exposée par la U1. Ces références restent **INCONNU**, plutôt que d’utiliser artificiellement la date d’installation de l’intégration. Si la date de mise en service est connue, elle peut être renseignée une seule fois dans **Configurer → Date de mise en service** ; c’est facultatif. Les dates des entretiens déjà consignés gardent la priorité.
+## Sur Stream Deck
 
-Les six opérations mécaniques et la calibration XYZ viennent du catalogue officiel déjà vérifié dans Companion. Les périodes sont intégrées. Une calibration conditionnelle peut être signalée via Configurer, puis consignée après réalisation.
+Le plugin **U1 Care 0.2.3** permet de garder les rappels à portée de main pendant l’utilisation de l’imprimante.
 
-## Connexion et heures
+Chaque touche peut afficher un entretien précis, une catégorie ou l’état général. Son symbole, son texte et son décompte suivent le choix fait dans le sélecteur de la touche. Les couleurs reprennent celles du tableau de bord : vert lime, orange et rouge.
 
-L’intégration essaie automatiquement les ports HTTP 80 et 7125 sur l’IP saisie. Elle vérifie le composant `history` et le champ `job_totals.total_print_time`, puis lit les heures toutes les 60 secondes. Elle n’envoie aucun G-code ni commande à la machine.
+Un appui sur une touche d’entretien ouvre directement sa procédure dans le navigateur, avec la checklist, le lien officiel et la validation. Par exemple, la touche **Courroies** ouvre **Courroies XY**. Les touches de catégorie ouvrent leurs procédures disponibles ; la touche **État général** affiche le bilan.
 
-Si Moonraker exige une clé API, un second écran demande **la clé existante de l’imprimante**, uniquement dans ce cas. L’IP seule ne permet pas de contourner une authentification. Les firmwares qui n’exposent pas ces routes, les ports personnalisés, HTTPS seul et les autres mécanismes de connexion ne sont pas pris en charge par cette version.
+### Installation et utilisation
 
-Les heures correspondent à l’historique conservé, hors impression en cours ; ce n’est pas une attestation de compteur à vie. Une perte de connexion rend les heures indisponibles. Les dates de maintenance locales restent accessibles quand la U1 est éteinte. Une baisse de l’historique est signalée, sans écraser l’ancien compteur ; une reprise explicite est disponible dans Configurer.
+1. Ouvrir le fichier d’installation U1 Care portant l’extension `.streamDeckPlugin` avec l’application Stream Deck.
+2. Ajouter l’action **U1 Care → Suivi de maintenance** sur une touche.
+3. Choisir l’entretien à afficher dans le sélecteur **Afficher sur cette touche**.
+4. Appuyer sur la touche pour ouvrir sa procédure et consigner l’entretien après l’avoir effectué.
 
-Les cycles de tête ne sont pas récupérés automatiquement : aucun champ n’a été confirmé. La partie cycles du suivi pogo reste inconnue si son compteur n’est pas renseigné. Le calendrier pogo demeure visible et le rappel de l’écran U1 reste la référence pour les changements de tête. La saisie des compteurs de secours est facultative ; aucun intervalle n’est demandé.
+L’application Stream Deck doit rester ouverte pour accéder au suivi local du plugin. Appuyer sur une touche ne valide pas automatiquement un entretien.
 
-Pour changer d’IP ou de clé, utiliser **Reconfigurer** dans le menu de l’intégration existante : les identifiants d’entités et les entretiens sont conservés.
+### Home Assistant et Stream Deck
 
-## Sauvegardes et reprise du suivi Stream Deck
+Les deux versions utilisent le même catalogue d’entretien, mais gardent actuellement **des suivis séparés**. Une validation dans Home Assistant ne met donc pas automatiquement à jour le plugin Stream Deck, et inversement. Les touches du plugin ouvrent leur suivi local, pas le tableau de bord Home Assistant.
 
-Le plugin Stream Deck 0.2.0 reste inchangé. Cette nouvelle intégration utilise son propre stockage Home Assistant : elle ne synchronise pas automatiquement deux historiques indépendants.
+Pour reprendre un suivi Stream Deck dans Home Assistant, exporter son fichier JSON, puis utiliser **Configurer → Importer un ancien suivi** dans l’intégration. Cet import est facultatif et ne modifie pas la connexion de l’imprimante.
 
-Pour reprendre les événements existants : exporter le JSON depuis Companion 0.2.0, puis utiliser **Configurer → Importer un ancien suivi**. Cet import facultatif préserve les événements et les références officielles, sans modifier l’IP ou les clés de l’intégration. Une copie du suivi précédent est sauvegardée avant import. Les tâches personnelles historiques sont conservées dans les données importées et le bilan général ; les sept capteurs dédiés correspondent au catalogue officiel.
+## Entretiens disponibles
 
-Le stockage est inclus dans les sauvegardes habituelles de Home Assistant. **Télécharger les diagnostics** dans le menu de l’intégration permet aussi d’obtenir `maintenance_backup`, réimportable dans ce même formulaire. Ce fichier contient le suivi et ses notes ; il exclut l’adresse réseau et la clé API. Supprimer l’intégration supprime son stockage local : conserver une sauvegarde si nécessaire.
+| Entretien | Fréquence du catalogue |
+| --- | --- |
+| Guidages et roulements | Mensuel |
+| Tiges carbone X | Mensuel |
+| Vis et écrous Z | Trimestriel |
+| Goupilles et billes | Trimestriel |
+| Courroies XY | Mensuel et selon les alertes de l’écran |
+| Contacts pogo | 4 à 6 mois ; rappel machine à 100 000 changements de tête |
+| Calibration XYZ | Selon les conditions indiquées par Snapmaker : remplacement, choc ou décalage, notamment |
 
-## Preuves et limites
+Les procédures résumées donnent accès aux guides officiels et à leurs illustrations. Pour une intervention, suivre les précautions et les instructions complètes de Snapmaker. [Consulter les sources du catalogue](SOURCES.md).
 
-Voir [les sources](SOURCES.md). Les validations du dépôt sont disponibles dans l’onglet Actions. Les essais utilisent le vrai moteur Home Assistant Core et une U1 simulée. Aucune U1 physique, instance Home Assistant de l’utilisateur ou interface graphique Home Assistant OS n’a été connectée.
+## Lecture des heures de la U1
 
+La lecture automatique dépend de l’accès Moonraker proposé par le firmware de l’imprimante. U1 Care vérifie sa disponibilité avant d’utiliser les données. Dans Home Assistant, les ports HTTP 80 et 7125 sont essayés automatiquement ; les heures sont ensuite actualisées toutes les 60 secondes.
+
+Les heures correspondent à l’historique d’impression conservé par Moonraker, hors impression en cours. Elles peuvent être incomplètes si cet historique a été effacé. L’intégration n’envoie aucune commande de mouvement ni de G-code à l’imprimante.
+
+Les firmwares sans accès compatible, les ports personnalisés et les connexions exclusivement HTTPS ne sont pas pris en charge par cette version de l’intégration. La saisie manuelle reste disponible en secours. Les cycles de changement de tête ne sont pas lus automatiquement ; leur compteur peut être renseigné depuis l’écran de la U1.
+
+Les dates des entretiens restent accessibles même lorsque l’imprimante est éteinte. Une perte de connexion ou une baisse de l’historique est signalée sans remettre le suivi à zéro.
+
+---
+
+U1 Care est un projet indépendant, sans affiliation avec Snapmaker, Home Assistant ou Elgato.
