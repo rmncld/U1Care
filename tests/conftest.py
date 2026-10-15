@@ -22,7 +22,8 @@ async def hass(tmp_path):
     frame.async_setup(instance)
     loader.async_setup(instance)
     instance.config_entries = ConfigEntries(instance, {})
-    device_registry.async_setup(instance)
+    if hasattr(device_registry, "async_setup"):
+        device_registry.async_setup(instance)
     await device_registry.async_load(instance)
     await entity_registry.async_load(instance)
     await instance.config_entries.async_initialize()

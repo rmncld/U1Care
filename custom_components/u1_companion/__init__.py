@@ -1,4 +1,4 @@
-"""U1 Companion, configured in Home Assistant without a PC bridge or YAML."""
+"""U1 Care, configured in Home Assistant without a PC bridge or YAML."""
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant

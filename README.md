@@ -1,6 +1,6 @@
-# U1 Companion pour Home Assistant · 0.3.1
+# U1 Care pour Home Assistant · 0.3.2
 
-Une intégration autonome : **Ajouter une intégration → U1 Companion → IP de la U1**.
+Une intégration autonome : **Ajouter une intégration → U1 Care → IP de la U1**.
 
 La connexion est directe entre Home Assistant et l’imprimante. Aucun PC à maintenir allumé, pont Companion, YAML, MQTT ou intervalle d’entretien à saisir.
 
@@ -8,14 +8,14 @@ La connexion est directe entre Home Assistant et l’imprimante. Aucun PC à mai
 
 [![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=u1-companion-home-assistant&category=integration)
 
-1. Cliquer sur **Ouvrir dans HACS**, confirmer le dépôt personnalisé puis télécharger **U1 Companion**.
+1. Cliquer sur **Ouvrir dans HACS**, confirmer le dépôt personnalisé puis télécharger **U1 Care**.
 2. Redémarrer Home Assistant pour charger les fichiers installés.
-3. Ouvrir **Paramètres → Appareils et services → Ajouter une intégration → U1 Companion**.
+3. Ouvrir **Paramètres → Appareils et services → Ajouter une intégration → U1 Care**.
 4. Entrer l’IP locale de la U1, par exemple `192.168.1.50`.
 
-Si le lien ne s’ouvre pas : **HACS → menu ⋮ → Dépôts personnalisés**, ajouter `https://github.com/rmncld/u1-companion-home-assistant`, catégorie **Intégration**, puis télécharger U1 Companion.
+Si le lien ne s’ouvre pas : **HACS → menu ⋮ → Dépôts personnalisés**, ajouter `https://github.com/rmncld/u1-companion-home-assistant`, catégorie **Intégration**, puis télécharger U1 Care.
 
-Home Assistant minimum : **2026.10.0** ; tests avec **2026.10.1**. L’intégration est indépendante de Snapmaker et de Home Assistant. Elle est distribuée comme dépôt personnalisé HACS ; elle n’est pas annoncée comme incluse au catalogue HACS par défaut.
+Home Assistant minimum : **2026.8.2** ; tests sur **2026.8.2** et **2026.10.1**. Le nom visible est **U1 Care**. L’identifiant interne `u1_companion` et l’URL GitHub sont conservés pour préserver les installations et liens existants. L’intégration est indépendante de Snapmaker et de Home Assistant. Elle est distribuée comme dépôt personnalisé HACS ; elle n’est pas annoncée comme incluse au catalogue HACS par défaut.
 
 ### Mise à jour
 

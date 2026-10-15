@@ -1,5 +1,5 @@
 {
-  "name": "U1 Companion",
-  "homeassistant": "2026.10.0",
+  "name": "U1 Care",
+  "homeassistant": "2026.8.2",
   "render_readme": true
 }

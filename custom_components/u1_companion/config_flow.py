@@ -3,7 +3,10 @@
 from copy import deepcopy
 import json
 
-import probatio as vol
+try:
+    import probatio as vol
+except ImportError:  # Home Assistant 2026.8 uses voluptuous.
+    import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -59,11 +62,11 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "moonraker_version": found["moonraker_version"]}
         if self._reconfigure:
             return self.async_update_reload_and_abort(self._reconfigure, data=data,
-                                                      title=f"U1 Companion · {self._host}",
+                                                      title=f"U1 Care · {self._host}",
                                                       reason="reconfigure_successful")
         # No fabricated serial number or mutable IP-based unique_id.
         # Entity IDs are based on HA's persistent entry ID.
-        return self.async_create_entry(title=f"U1 Companion · {self._host}", data=data)
+        return self.async_create_entry(title=f"U1 Care · {self._host}", data=data)
 
     @staticmethod
     def _auth_schema():

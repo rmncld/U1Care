@@ -27,7 +27,7 @@ async def test_real_setup_ip_only_entities_and_duplicate(hass):
         await hass.async_block_till_done()
         assert entry.state == ConfigEntryState.LOADED
         assert entry.runtime_data.state["machine"]["startDate"] is None
-        entities = [e for e in hass.states.async_all() if "u1_companion" in e.entity_id]
+        entities = [e for e in hass.states.async_all() if "u1_care" in e.entity_id]
         assert len(entities) == 10
         assert any(e.state == "2.0" for e in entities)
         assert any(e.state == "INCONNU" for e in entities)
@@ -143,7 +143,7 @@ async def test_real_reconfigure_keeps_entry_events_and_entities(hass):
         assert result["type"] == "abort" and result["reason"] == "reconfigure_successful"
         await hass.async_block_till_done()
         assert entry.data["host"] == "192.168.1.56"
-        assert entry.title == "U1 Companion · 192.168.1.56"
+        assert entry.title == "U1 Care · 192.168.1.56"
         assert entry.runtime_data.state["history"][0]["note"] == "keep me"
         assert {s.entity_id for s in hass.states.async_all()} == entity_ids
 
@@ -205,3 +205,4 @@ async def test_real_corrupt_store_not_replaced(hass):
         assert not await hass.config_entries.async_setup(entry.entry_id)
         stored = await store.async_load()
         assert stored == {"schemaVersion": 99, "marker": "preserve-corrupt-file"}
+
