@@ -66,4 +66,4 @@ Le stockage est inclus dans les sauvegardes habituelles de Home Assistant. **Té
 
 ## Preuves et limites
 
-Voir [les sources](SOURCES.md). Les validations du dépôt sont disponibles dans l’onglet Actions. Les essais utilisent le vrai moteur Home Assistant Core et une U1 simulée. Aucune U1 physique, instance Home Assistant de l’utilisateur ou interface graphique Home Assistant OS n’a été connectée. Aucun composant n’a été installé dans votre Home Assistant.
+Voir [les sources](SOURCES.md). Les validations du dépôt sont disponibles dans l’onglet Actions. Les essais utilisent le vrai moteur Home Assistant Core et une U1 simulée. Aucune U1 physique, instance Home Assistant de l’utilisateur ou interface graphique Home Assistant OS n’a été connectée.
