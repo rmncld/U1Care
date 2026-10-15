@@ -1,7 +1,7 @@
 """Constants for the standalone U1 Care integration."""
 
 DOMAIN = "u1_companion"
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 PLATFORMS = ["sensor", "binary_sensor"]
 POLL_SECONDS = 60
 STORAGE_VERSION = 1

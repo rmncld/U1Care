@@ -33,6 +33,8 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
+            if user_input.get("demo") is True and self._reconfigure is None:
+                return self.async_create_entry(title="U1 Care — DÉMONSTRATION", data={"demo": True})
             try:
                 self._host = normalize_host(user_input["host"])
             except (ValueError, KeyError):
@@ -44,7 +46,8 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return await self._try_connect()
         default = self._host or (self._reconfigure.data["host"] if self._reconfigure else "")
         return self.async_show_form(step_id="user", data_schema=vol.Schema({
-            vol.Required("host", default=default): str}), errors=errors)
+            vol.Optional("host", default=default): str,
+            vol.Optional("demo", default=False): bool}), errors=errors)
 
     async def _try_connect(self, api_key=""):
         try:
@@ -80,6 +83,8 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_reconfigure(self, user_input=None):
         self._reconfigure = self._get_reconfigure_entry()
+        if self._reconfigure.data.get("demo"):
+            return self.async_abort(reason="demo_separate")
         return await self.async_step_user(user_input)
 
 

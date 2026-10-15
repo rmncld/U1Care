@@ -4,9 +4,10 @@
     "step": {
       "user": {
         "title": "Connect your U1",
-        "description": "Enter only the local IP address of your Snapmaker U1. Moonraker is checked automatically. No PC bridge or YAML is needed. Unknown maintenance dates remain unknown.",
+        "description": "Enter only the local IP address of your Snapmaker U1. Moonraker is checked automatically. No PC bridge or YAML is needed. Unknown maintenance dates remain unknown.\n\nTo test without a U1, enable Demo. Hours and dates are simulated and separate from real records. Add a separate integration with an IP for a real printer.",
         "data": {
-          "host": "U1 IP address"
+          "host": "U1 IP address",
+          "demo": "Demo without a printer (leave IP blank)"
         }
       },
       "auth": {
@@ -25,7 +26,8 @@
     },
     "abort": {
       "already_configured": "This IP is already configured. To change an existing address, use Reconfigure.",
-      "reconfigure_successful": "Connection updated. Maintenance records were preserved."
+      "reconfigure_successful": "Connection updated. Maintenance records were preserved.",
+      "demo_separate": "Add a separate integration with an IP for a real printer. Demo records remain separate."
     }
   },
   "options": {

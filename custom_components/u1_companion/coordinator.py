@@ -25,7 +25,8 @@ class U1Coordinator(DataUpdateCoordinator):
                          update_interval=timedelta(seconds=POLL_SECONDS))
         self.entry = entry
         self.store = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}")
-        self.api = U1Api(async_get_clientsession(hass), entry.data["host"],
+        self.demo = entry.data.get("demo", False)
+        self.api = None if self.demo else U1Api(async_get_clientsession(hass), entry.data["host"],
                          entry.data["port"], entry.data.get("api_key", ""))
         self.lock = asyncio.Lock()
         self.catalog = None
@@ -45,6 +46,13 @@ class U1Coordinator(DataUpdateCoordinator):
         self.catalog = await self.hass.async_add_executor_job(read_catalog)
         stored = await self.store.async_load()
         self.state = model.validate(stored, self.catalog) if stored is not None else model.fresh(self.catalog)
+        if self.demo:
+            self.state["demo"] = True
+            if stored is None:
+                self.state["machine"].update(name="U1 SIMULÉE", hours=1200.0, swaps=42000, hoursSource="demo")
+                for task, age in zip(self.state["tasks"], [3, 28, 50, 100, 5, 180, 10]):
+                    task["calendarBaseDate"] = (dt_util.now().date() - timedelta(days=age)).isoformat()
+                await self.store.async_save(self.state)
         # Never reuse an old successful reading as a current measurement after restart.
         self.current_hours = None
 
@@ -54,10 +62,14 @@ class U1Coordinator(DataUpdateCoordinator):
             view["machine"]["hours"] = self.current_hours
         return {**model.snapshot(view, self.today()), "hours": view["machine"]["hours"],
                 "hours_source": view["machine"].get("hoursSource", "unknown"),
-                "connected": self.connected, "connection_error": self.error,
+                "demo": self.demo, "connected": self.connected, "connection_error": self.error,
                 "last_success": self.last_success, "catalog_version": self.catalog["version"]}
 
     async def _async_update_data(self):
+        if self.demo:
+            self.connected = False
+            self.error = "demo_no_printer"
+            return self.build_snapshot()
         try:
             hours = await self.api.async_hours()
             error = None
@@ -113,7 +125,11 @@ class U1Coordinator(DataUpdateCoordinator):
 
     async def async_import(self, state):
         """Import only the maintenance state, never a bridge host or credentials."""
+        if state.get("demo") and not self.demo:
+            raise ValueError("Simulated records cannot be imported into a real printer")
         next_state = deepcopy(model.validate(state, self.catalog))
+        if self.demo:
+            next_state["demo"] = True
         next_state["connection"] = {"url": "", "enabled": True,
                                     "status": "unknown", "lastSuccess": None}
         # A separate pre-import backup survives later updates, until integration removal.

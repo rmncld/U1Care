@@ -16,7 +16,7 @@ class U1Entity(CoordinatorEntity):
             identifiers={(DOMAIN, coordinator.entry.entry_id)},
             name=coordinator.entry.title,
             manufacturer="Snapmaker",
-            model="U1 — suivi indépendant Companion",
-            sw_version=f"Companion {VERSION}",
-            configuration_url=coordinator.api.url,
+            model="U1 — DÉMONSTRATION" if coordinator.demo else "U1 — suivi indépendant Care",
+            sw_version=f"U1 Care {VERSION}",
+            configuration_url=coordinator.api.url if coordinator.api else None,
         )

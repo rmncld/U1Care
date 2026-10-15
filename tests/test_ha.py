@@ -20,7 +20,7 @@ async def test_real_setup_ip_only_entities_and_duplicate(hass):
         "custom_components.u1_companion.api.U1Api.async_hours", return_value=2.0):
         result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER})
         assert result["type"] == "form"
-        assert len(result["data_schema"].schema) == 1
+        assert len(result["data_schema"].schema) == 2
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {"host": "192.168.1.50"})
         assert result["type"] == "create_entry"
         entry = result["result"]

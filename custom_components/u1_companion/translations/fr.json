@@ -4,9 +4,10 @@
     "step": {
       "user": {
         "title": "Connecter votre U1",
-        "description": "Saisissez uniquement l’adresse IP locale de votre Snapmaker U1. Companion recherche son accès Moonraker et installe les capteurs. Aucun PC ni YAML nécessaire. Les dates d’entretien inconnues ne seront pas inventées.",
+        "description": "Saisissez uniquement l’adresse IP locale de votre Snapmaker U1. Companion recherche son accès Moonraker et installe les capteurs. Aucun PC ni YAML nécessaire. Les dates d’entretien inconnues ne seront pas inventées.\n\nPour tester sans U1, cochez Démonstration. Les heures et dates sont simulées, séparées du suivi réel. Pour une vraie U1, ajoutez ensuite une nouvelle intégration avec son IP.",
         "data": {
-          "host": "Adresse IP de la U1"
+          "host": "Adresse IP de la U1",
+          "demo": "Démonstration sans imprimante (laisser l’IP vide)"
         }
       },
       "auth": {
@@ -25,7 +26,8 @@
     },
     "abort": {
       "already_configured": "Cette IP est déjà configurée. Pour une IP modifiée, utilisez Reconfigurer sur l’intégration existante.",
-      "reconfigure_successful": "La connexion U1 est mise à jour ; les entretiens sont conservés."
+      "reconfigure_successful": "La connexion U1 est mise à jour ; les entretiens sont conservés.",
+      "demo_separate": "Pour une vraie imprimante, ajoutez une nouvelle intégration avec son IP. Les données de démonstration restent séparées."
     }
   },
   "options": {
