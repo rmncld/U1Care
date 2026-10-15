@@ -1,0 +1,111 @@
+{
+  "title": "U1 Companion",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connecter votre U1",
+        "description": "Saisissez uniquement l’adresse IP locale de votre Snapmaker U1. Companion recherche son accès Moonraker et installe les capteurs. Aucun PC ni YAML nécessaire. Les dates d’entretien inconnues ne seront pas inventées.",
+        "data": {
+          "host": "Adresse IP de la U1"
+        }
+      },
+      "auth": {
+        "title": "Accès protégé par votre imprimante",
+        "description": "Votre Moonraker exige une authentification. Fournissez sa clé API existante. Companion ne modifie pas le firmware et ne désactive pas ses protections.",
+        "data": {
+          "api_key": "Clé API Moonraker"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Saisissez une adresse IPv4 locale seule, par exemple 192.168.1.50.",
+      "cannot_connect": "U1 inaccessible. Vérifiez son alimentation, son IP et sa connexion au même réseau que Home Assistant.",
+      "unsupported": "L’accès détecté ne fournit pas un historique Moonraker exploitable. Les ports essayés sont 80 et 7125.",
+      "invalid_auth": "La clé n’est pas acceptée par Moonraker."
+    },
+    "abort": {
+      "already_configured": "Cette IP est déjà configurée. Pour une IP modifiée, utilisez Reconfigurer sur l’intégration existante.",
+      "reconfigure_successful": "La connexion U1 est mise à jour ; les entretiens sont conservés."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Suivi de votre U1",
+        "menu_options": {
+          "maintenance": "Consigner un entretien réalisé",
+          "reference": "Renseigner la date de mise en service (facultatif)",
+          "signal": "Signaler un besoin de calibration XYZ",
+          "counters": "Compteurs manuels de secours (facultatif)",
+          "resume": "Reprendre la lecture automatique",
+          "import_backup": "Importer un ancien suivi (facultatif)"
+        }
+      },
+      "maintenance": {
+        "title": "Quel entretien avez-vous effectué ?",
+        "description": "Chaque entretien conserve sa propre date et sa prochaine échéance. Le catalogue officiel fixe les intervalles automatiquement.",
+        "data": {
+          "task_id": "Entretien réalisé"
+        }
+      },
+      "complete": {
+        "title": "{task}",
+        "description": "{procedure}\n\n[Consulter les illustrations et précautions officielles]({source})\n\nCochez chaque étape réellement effectuée, puis validez. Seul cet entretien est mis à jour. Une date passée n’utilise pas les compteurs d’aujourd’hui.",
+        "data": {
+          "completed_day": "Date réelle de l’entretien",
+          "step_1": "Étape 1 effectuée",
+          "step_2": "Étape 2 effectuée",
+          "step_3": "Étape 3 effectuée",
+          "step_4": "Étape 4 effectuée",
+          "note": "Note (facultatif)"
+        }
+      },
+      "reference": {
+        "title": "Référence initiale (facultative)",
+        "description": "Si vous connaissez la date de mise en service, renseignez-la une seule fois. Elle sert aux entretiens sans événement connu et ne remplace aucune validation. Sinon, laissez les références inconnues jusqu’au prochain entretien.",
+        "data": {
+          "start_date": "Date de mise en service connue"
+        }
+      },
+      "signal": {
+        "title": "Calibration XYZ",
+        "description": "Signalez un besoin après remplacement/permutation de tête ou hotend, choc, retrait d’un amas ou décalage entre couleurs. Après la calibration, consignez-la dans « Entretien réalisé ».",
+        "data": {
+          "active": "Une calibration XYZ est nécessaire"
+        }
+      },
+      "counters": {
+        "title": "Compteurs de secours",
+        "description": "Facultatif : les cycles sont consultables sur l’écran U1 et ne sont pas déduits des heures. Laissez les champs inutiles vides. Saisir des heures active le repli manuel ; utilisez « Reprendre la lecture automatique » pour revenir à Moonraker. Les intervalles ne sont jamais à saisir.",
+        "data": {
+          "swaps": "Changements de tête cumulés (écran U1)",
+          "hours": "Heures cumulées (repli manuel)"
+        }
+      },
+      "resume": {
+        "title": "Reprendre les heures Moonraker",
+        "description": "Réactive la lecture directe. Si l’historique a été réinitialisé, le nouveau compteur est accepté comme une nouvelle référence : les anciennes références horaires sont conservées pour mémoire. Les dates et événements d’entretien restent intacts.",
+        "data": {
+          "confirm": "Je confirme la reprise de lecture et, si nécessaire, le nouveau compteur"
+        }
+      },
+      "import_backup": {
+        "title": "Importer un suivi existant",
+        "description": "Facultatif. Collez un export JSON Companion 0.2.0, ou les diagnostics de cette intégration contenant maintenance_backup. Cela remplace le suivi actuel après sauvegarde locale préalable. L’IP et les clés actuelles ne sont pas remplacées. Ne partagez pas les notes de votre sauvegarde.",
+        "data": {
+          "backup_json": "Sauvegarde JSON",
+          "confirm": "Je confirme le remplacement du suivi actuel"
+        }
+      }
+    },
+    "error": {
+      "check_all_steps": "Cochez toutes les étapes réalisées avant validation.",
+      "invalid_date": "Date invalide, future ou antérieure au dernier entretien connu.",
+      "invalid_note": "La note doit contenir au maximum 2 000 caractères.",
+      "save_failed": "Échec de sauvegarde. Aucune nouvelle validation n’a été appliquée.",
+      "invalid_counter": "Indiquez au moins un compteur valide, sans diminution. Les changements de tête sont des entiers.",
+      "confirm_required": "Confirmez l’opération pour continuer.",
+      "invalid_backup": "Sauvegarde invalide ou catalogue incompatible. Le suivi courant est conservé."
+    }
+  }
+}
