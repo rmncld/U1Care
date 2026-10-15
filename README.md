@@ -45,14 +45,14 @@ Le tableau de bord peut ensuite être modifié avec l’éditeur habituel de Hom
 
 **Home Assistant 2026.8.2 minimum.**
 
-[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=u1-care-home-assistant&category=integration)
+[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rmncld&repository=U1Care&category=integration)
 
 1. Ouvrir le lien HACS, ajouter le dépôt personnalisé et télécharger **U1 Care**.
 2. Redémarrer Home Assistant.
 3. Aller dans **Paramètres → Appareils et services → Ajouter une intégration → U1 Care**.
 4. Renseigner l’adresse IP locale de la U1.
 
-Si le lien ne fonctionne pas, ajouter `https://github.com/rmncld/u1-care-home-assistant` dans **HACS → menu ⋮ → Dépôts personnalisés**, catégorie **Intégration**.
+Si le lien ne fonctionne pas, ajouter `https://github.com/rmncld/U1Care` dans **HACS → menu ⋮ → Dépôts personnalisés**, catégorie **Intégration**.
 
 La connexion se fait directement depuis Home Assistant. Aucun ordinateur supplémentaire n’a besoin de rester allumé. Si l’accès de l’imprimante exige une clé API, U1 Care la demande dans un second écran.
 
