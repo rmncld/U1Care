@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "version": "2026.10.15.1",
+  "verifiedAt": "2026-10-15",
+  "sourceUpdatedAt": "2026-09-21",
+  "sources": [
+    {
+      "id": "core",
+      "url": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide",
+      "title": "U1 core components maintenance guide"
+    },
+    {
+      "id": "faq",
+      "url": "https://wiki.snapmaker.com/en/FAQ/u1",
+      "title": "U1 FAQ — pogo pins and firmware"
+    }
+  ],
+  "policy": "Mois calendaires, sans conversion en heures. SOON = préavis applicatif de 7 jours, sauf plage pogo officielle de 4 à 6 mois. Cycles : préavis applicatif 5 000. Aucun intervalle horaire officiel trouvé dans le guide.",
+  "tasks": [
+    {
+      "id": "linear-shafts",
+      "title": "Guidages et roulements",
+      "group": "motion",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#linear-shaft-linear-bearing",
+      "sourceStatus": "official",
+      "months": 1,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Mensuel",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Nettoyer au chiffon non pelucheux légèrement imbibé d’alcool ; éviter l’intérieur des roulements.",
+        "Appliquer peu de graisse lithium légère ou 1–2 gouttes d’huile synthétique pour broches ; répartir sur la course.",
+        "Essuyer l’excès ; ne pas contaminer les courroies, ne pas utiliser de WD-40."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core"
+      ]
+    },
+    {
+      "id": "carbon-rods",
+      "title": "Tiges carbone X",
+      "group": "motion",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#x-carbon-rod-assembly",
+      "sourceStatus": "official",
+      "months": 1,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Mensuel",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Essuyer doucement les tiges avec un chiffon non pelucheux et de l’isopropanol à 70 % ou de l’éthanol.",
+        "Ne jamais appliquer d’huile ni de graisse sur les tiges carbone."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core"
+      ]
+    },
+    {
+      "id": "lead-screws",
+      "title": "Vis et écrous Z",
+      "group": "motion",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#lead-screw-nut",
+      "sourceStatus": "official",
+      "months": 3,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Trimestriel",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Brosser les filets avec une brosse douce ; retirer les saletés résistantes au chiffon et à l’alcool.",
+        "Déposer une fine couche de graisse blanche lithium légère, NLGI 2–3, non corrosive pour le cuivre.",
+        "Répartir sur la course Z et essuyer l’excès sans souiller les courroies."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core"
+      ]
+    },
+    {
+      "id": "steel-coupling",
+      "title": "Goupilles et billes",
+      "group": "toolheads",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#steel-pin-steel-ball",
+      "sourceStatus": "official",
+      "months": 3,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Trimestriel",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Nettoyer les goupilles et billes au chiffon non pelucheux légèrement imbibé d’alcool.",
+        "Appliquer une quantité modérée de graisse lithium aux emplacements indiqués par les flèches du guide."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core"
+      ]
+    },
+    {
+      "id": "timing-belts",
+      "title": "Courroies XY",
+      "group": "inspection",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#timing-belt",
+      "sourceStatus": "official",
+      "months": 1,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Mensuel et selon alerte écran",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Vérifier les alertes de tension sur l’écran de la machine.",
+        "Suivre le guide officiel de réglage XY si nécessaire ; enlever la poussière des dents au chiffon sec."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core"
+      ]
+    },
+    {
+      "id": "pogo-contacts",
+      "title": "Contacts pogo",
+      "group": "toolheads",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#pogo-pin",
+      "sourceStatus": "official",
+      "months": 6,
+      "earliestMonths": 4,
+      "intervalHours": null,
+      "intervalSwaps": 100000,
+      "frequency": "4 à 6 mois ; rappel machine à 100 000 changements",
+      "steps": [
+        "Éteindre la machine et laisser refroidir complètement le plateau et les têtes avant intervention. Suivre les illustrations du guide officiel.",
+        "Humidifier très légèrement un chiffon non pelucheux avec 1–2 gouttes d’alcool, sans le détremper.",
+        "Essuyer doucement les contacts des deux côtés dans un seul sens ; aucun objet dur, aucune graisse.",
+        "Laisser évaporer l’alcool 10–20 secondes ou sécher au chiffon propre."
+      ],
+      "condition": null,
+      "sourceRefs": [
+        "core",
+        "faq"
+      ]
+    },
+    {
+      "id": "xyz-calibration",
+      "title": "Calibration XYZ",
+      "group": "inspection",
+      "source": "https://wiki.snapmaker.com/en/snapmaker_u1/troubleshooting/Core_Components_Maintenance_Guide#xyz-offset-calibration",
+      "sourceStatus": "official",
+      "months": null,
+      "earliestMonths": null,
+      "intervalHours": null,
+      "intervalSwaps": null,
+      "frequency": "Conditionnel : remplacement, choc, amas retiré ou décalage des couleurs",
+      "steps": [
+        "Après remplacement ou permutation de tête/hotend avant multicolore, choc, amas retiré ou décalage de couleurs : ouvrir Settings > Device Calibration > Multi-toolhead Offset Calibration > Start.",
+        "Suivre les instructions de l’écran. Cette opération se fait machine allumée, après l’entretien physique."
+      ],
+      "condition": "Remplacement ou permutation de tête/hotend, choc, amas retiré ou décalage multicolore",
+      "sourceRefs": [
+        "core"
+      ]
+    }
+  ]
+}
