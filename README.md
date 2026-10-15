@@ -1,4 +1,6 @@
-# U1 Care pour Home Assistant · 0.3.5
+# U1 Care pour Home Assistant · 0.3.6
+
+**Logo U1 Care inclus localement** dans la fiche d’intégration, sans configuration.
 
 **Nouveau : tableau de bord automatique.** Après l’ajout d’une U1 (ou Démonstration), son tableau de bord apparaît dans la barre latérale sans import. Il reste modifiable avec l’éditeur Home Assistant ; les mises à jour préservent les personnalisations. Les entrées existantes en bénéficient au redémarrage après mise à jour. [Détails et limites](DASHBOARD.md).
 
