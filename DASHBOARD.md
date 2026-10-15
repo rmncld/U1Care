@@ -1,11 +1,13 @@
-# Tableau de bord U1 Care
+# Tableau de bord automatique · U1 Care 0.3.5
 
-La version 0.3.4 ajoute la validation d’un entretien depuis sa page de procédure, après confirmation que toutes les étapes ont été effectuées aujourd’hui. Seul l’entretien ciblé est enregistré. Aucun ordre n’est envoyé à l’imprimante. Pour une intervention passée, utiliser le formulaire Configurer habituel et sa date réelle.
+Après installation HACS et redémarrage, ajouter une U1 avec son IP ou choisir Démonstration : son tableau de bord apparaît automatiquement dans la barre latérale. Aucun import ni saisie des entités. Les entrées existantes en bénéficient au redémarrage après mise à jour. Un tableau U1 Care contenant déjà les entités de cette entrée est repris sans réécriture.
 
-Pour distribuer la présentation : ouvrir **U1 Care → Configurer → Modèle de tableau de bord**. Copier le contenu généré, créer un tableau de bord vide avec l’URL indiquée et coller le contenu dans son éditeur de configuration brute. Les identifiants sont résolus depuis le registre de cette installation : aucune saisie des entités, des heures ou des intervalles n’est demandée. Les dates inconnues ne sont pas inventées.
+Le tableau utilise le stockage Lovelace natif. Un administrateur peut modifier ses cartes, ses vues et son titre dans Home Assistant. Les personnalisations sont conservées aux mises à jour et redémarrages. Un tableau supprimé volontairement n’est pas recréé. La suppression de l’intégration ne détruit pas les tableaux personnalisés.
 
-Le modèle reste entièrement modifiable avec l’éditeur Home Assistant. La génération n’écrit et ne remplace aucun tableau de bord existant. Le choix du tableau de bord par défaut appartient à chaque utilisateur dans ses paramètres de profil. L’intégration ne modifie pas les préférences personnelles des autres comptes.
+Chaque U1 possède son propre suivi et son tableau. Les démonstrations restent identifiées. Chaque utilisateur choisit son tableau par défaut dans son profil ; l’intégration ne remplace pas les préférences des autres comptes.
 
-Les fonctions utilisent des cartes natives. La charte sombre et les couleurs conditionnelles utilisent **card-mod** lorsqu’il est installé ; sans cette extension, les cartes gardent les fonctions et le thème Home Assistant. Le logo est chargé depuis le dépôt GitHub ; les entretiens et leur validation restent locaux.
+Chaque procédure permet de valider l’entretien après confirmation de toutes les étapes effectuées aujourd’hui. Seul cet entretien est enregistré. Pour une intervention passée, utiliser Configurer et sa date réelle. Aucun ordre envoyé à l’imprimante.
 
-Le modèle suit l’entrée sélectionnée : démonstration et imprimante réelle restent séparées. Un appareil de démonstration est clairement signalé. Les mises à jour de U1 Care ne réécrivent pas les personnalisations du tableau de bord.
+Les cartes natives fonctionnent sans autre extension. La charte et les couleurs conditionnelles utilisent card-mod lorsqu’il est installé. Le logo provient de GitHub. Configurer → Exporter le modèle reste disponible en option.
+
+Compatibilité testée : Home Assistant Core 2026.8.2 et 2026.10.1. Home Assistant ne fournit pas de fonction publique de création de tableau de bord à une intégration : un adaptateur isolé retrouve sa collection native depuis l’enregistrement WebSocket. Il n’appelle pas de commande WebSocket et ne simule pas de compte utilisateur. La création, l’édition, le renommage, le rechargement, la suppression volontaire, la reprise et l’isolation des U1 sont testés avec les composants Lovelace réels. Une évolution de cette API interne peut nécessiter une mise à jour ; elle ne doit pas empêcher le suivi d’entretien de fonctionner.

@@ -41,7 +41,7 @@
           "counters": "Manual fallback counters (optional)",
           "resume": "Resume automatic history readings",
           "import_backup": "Import existing records (optional)",
-          "dashboard": "Dashboard template"
+          "dashboard": "Export dashboard template (optional)"
         }
       },
       "maintenance": {
@@ -102,7 +102,7 @@
       },
       "dashboard": {
         "title": "Tableau de bord U1 Care",
-        "description": "Copy the configuration below. Create an empty dashboard with URL {path}, then paste it into the raw configuration editor. Entities are resolved automatically for this U1. Cards remain editable; each user can select this dashboard as default in their profile. Styling uses card-mod when installed.",
+        "description": "The dashboard is created automatically and remains editable in Home Assistant. This optional export is resolved for this U1. For a copy, create an empty dashboard with URL {path} and paste this configuration in its raw editor. Updates preserve customizations. Each user chooses their own default dashboard.",
         "data": {
           "dashboard_json": "Dashboard configuration"
         }

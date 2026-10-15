@@ -13,7 +13,7 @@
           "cards": [
             {
               "type": "markdown",
-              "content": "<img src=\"https://raw.githubusercontent.com/rmncld/u1-care-home-assistant/33a94ccd10e20edd7abe6d681bc040e383723c19/assets/u1-care-mark.svg\" width=\"58\" alt=\"Logo U1 Care\">\n\n# U1 Care\n### Votre atelier, prêt pour la prochaine impression.\n**DÉMONSTRATION** · Dates et compteurs fictifs · Aucune U1 connectée",
+              "content": "<img src=\"https://raw.githubusercontent.com/rmncld/u1-care-home-assistant/33a94ccd10e20edd7abe6d681bc040e383723c19/assets/u1-care-mark.svg\" width=\"48\" alt=\"Logo U1 Care\">\n\n## U1 Care\nVotre atelier, prêt pour la prochaine impression.\n**DÉMONSTRATION** · Dates et compteurs fictifs · Aucune U1 connectée",
               "grid_options": {
                 "columns": "full"
               },
@@ -81,6 +81,9 @@
               "content": "<ha-icon icon=\"mdi:axis-arrow\"></ha-icon> **Guidages & roulements**\n\n### {{ states('__ENTITY_guides__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-guides)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_guides__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {
@@ -88,6 +91,9 @@
               "content": "<ha-icon icon=\"mdi:ray-start-end\"></ha-icon> **Tiges carbone X**\n\n### {{ states('__ENTITY_carbon__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-carbon)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_carbon__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {
@@ -95,6 +101,9 @@
               "content": "<ha-icon icon=\"mdi:screw-machine-flat-top\"></ha-icon> **Vis & écrous Z**\n\n### {{ states('__ENTITY_z__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-z)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_z__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {
@@ -102,6 +111,9 @@
               "content": "<ha-icon icon=\"mdi:rotate-3d-variant\"></ha-icon> **Courroies XY**\n\n### {{ states('__ENTITY_belts__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-belts)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_belts__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             }
           ]
@@ -120,6 +132,9 @@
               "content": "<ha-icon icon=\"mdi:circle-multiple-outline\"></ha-icon> **Goupilles & billes**\n\n### {{ states('__ENTITY_coupling__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-coupling)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_coupling__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {
@@ -127,6 +142,9 @@
               "content": "<ha-icon icon=\"mdi:connection\"></ha-icon> **Contacts pogo**\n\n### {{ states('__ENTITY_pogo__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-pogo)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_pogo__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {
@@ -134,6 +152,9 @@
               "content": "<ha-icon icon=\"mdi:target\"></ha-icon> **Calibration XYZ**\n\n### {{ states('__ENTITY_xyz__') }}\n\n[Voir la procédure →](/__DASHBOARD_PATH__/procedure-xyz)",
               "card_mod": {
                 "style": "{% set level = state_attr('__ENTITY_xyz__', 'level') %}{% set accent = '#ef4444' if level == 'due' else '#f59e0b' if level == 'soon' else '#a3e635' if level == 'ok' else '#94a3b8' %}ha-card { background: #10161d; border: 1px solid #28323c; border-left: 4px solid {{ accent }}; border-radius: 16px; --tile-color: {{ accent }}; --state-icon-color: {{ accent }}; color: #eef2f5; box-shadow: none; } ha-card { padding: 2px 6px; } ha-card { padding: 0; } ha-markdown { padding: 10px 14px !important; }"
+              },
+              "grid_options": {
+                "columns": 6
               }
             },
             {

@@ -109,11 +109,12 @@ class U1OptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self._finish()
         from .dashboard_config import async_dashboard_config
-        config = await async_dashboard_config(self.hass, self.config_entry)
+        path = self.config_entry.options.get("dashboard_path") or f"u1-care-{self.config_entry.entry_id[:8].lower()}"
+        config = await async_dashboard_config(self.hass, self.config_entry, path)
         return self.async_show_form(step_id="dashboard", data_schema=vol.Schema({
             vol.Optional("dashboard_json", default=json.dumps(config, ensure_ascii=False, indent=2)):
                 selector.TextSelector(selector.TextSelectorConfig(multiline=True))}),
-            description_placeholders={"path": f"u1-care-{self.config_entry.entry_id[:8].lower()}"})
+            description_placeholders={"path": path})
 
     async def async_step_maintenance(self, user_input=None):
         if user_input:

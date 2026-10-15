@@ -41,7 +41,7 @@
           "counters": "Compteurs manuels de secours (facultatif)",
           "resume": "Reprendre la lecture automatique",
           "import_backup": "Importer un ancien suivi (facultatif)",
-          "dashboard": "Modèle de tableau de bord"
+          "dashboard": "Exporter le modèle (facultatif)"
         }
       },
       "maintenance": {
@@ -102,7 +102,7 @@
       },
       "dashboard": {
         "title": "Tableau de bord U1 Care",
-        "description": "Copier le contenu ci-dessous. Créer un tableau de bord vide, URL {path}, puis coller ce contenu dans son éditeur de configuration brute. Les entités sont déjà adaptées à cette U1. Ensuite, chacun peut modifier les cartes et choisir ce tableau de bord par défaut dans son profil. Le style utilise card-mod si installé.",
+        "description": "Le tableau de bord est créé automatiquement et reste modifiable dans Home Assistant. Ce code est un export facultatif adapté à cette U1. Pour une copie, créer un tableau vide avec l’URL {path}, puis coller ce contenu dans son éditeur de configuration brute. Les mises à jour ne remplacent pas les personnalisations. Le choix du tableau de bord par défaut reste personnel.",
         "data": {
           "dashboard_json": "Configuration du tableau de bord"
         }
