@@ -1,0 +1,14 @@
+{
+  "domain": "u1_companion",
+  "name": "U1 Companion",
+  "version": "0.3.1",
+  "codeowners": [
+    "@rmncld"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/rmncld/u1-companion-home-assistant",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": [],
+  "issue_tracker": "https://github.com/rmncld/u1-companion-home-assistant/issues"
+}
