@@ -149,7 +149,7 @@ def task_status(task, state, today):
     base = task.get("calendarBaseDate") or (task.get("lastDate") or "")[:10] or state["machine"].get("startDate")
     if task.get("months") or task.get("intervalDays"):
         if not base:
-            states.append(_unknown("Date de référence ou de dernier entretien inconnue"))
+            states.append({**_unknown("Date de référence ou de dernier entretien inconnue"), "metric": "days"})
         else:
             due = (add_months(base, task["months"]) if task.get("months") else
                    (valid_day(base) + timedelta(days=task["intervalDays"])).isoformat())
@@ -157,14 +157,14 @@ def task_status(task, state, today):
             warning = task.get("warningDays", 7)
             if task.get("earliestMonths"):
                 warning = (valid_day(due) - valid_day(add_months(base, task["earliestMonths"]))).days
-            states.append({**_status(remaining, warning, "j"), "dueDate": due})
+            states.append({**_status(remaining, warning, "j"), "dueDate": due, "metric": "days"})
     if task.get("intervalSwaps"):
         swaps = state["machine"].get("swaps")
         if swaps is None or (task.get("lastDate") and task.get("lastSwaps") is None):
-            states.append(_unknown("Cycles non exposés : consulter le rappel écran U1"))
+            states.append({**_unknown("Compteur de changements indisponible"), "metric": "swaps"})
         else:
             remaining = (task.get("lastSwaps") or 0) + task["intervalSwaps"] - swaps
-            states.append(_status(remaining, task.get("warningSwaps", 5000), "cy"))
+            states.append({**_status(remaining, task.get("warningSwaps", 5000), "cy"), "metric": "swaps"})
     if task.get("intervalHours"):
         hours = state["machine"].get("hours")
         if hours is None or task.get("lastHours") is None:

@@ -1,3 +1,7 @@
+# 0.4.1
+
+Pogo contacts now display both remaining days and remaining changes, including unknown or overdue values. Existing dashboards update through the sensor state; no storage or dashboard migration. Dates and maintenance events are preserved. [Release details](docs/RELEASE-0.4.1.md).
+
 # 0.4.0
 
 Four real toolhead counters from U1Deck, persistent cumulative pogo tracking, custom printer name and commissioning date at setup, no new demo entries. Non-destructive v0.3.6 migration, preserved entities/events and incremental dashboard update. [Release details](docs/RELEASE-0.4.0.md).
