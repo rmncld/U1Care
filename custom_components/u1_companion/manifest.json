@@ -1,14 +1,14 @@
 {
   "domain": "u1_companion",
   "name": "U1 Care",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "codeowners": [
     "@rmncld"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/rmncld/u1-companion-home-assistant",
+  "documentation": "https://github.com/rmncld/U1Care",
   "integration_type": "device",
   "iot_class": "local_polling",
   "requirements": [],
-  "issue_tracker": "https://github.com/rmncld/u1-companion-home-assistant/issues"
+  "issue_tracker": "https://github.com/rmncld/U1Care/issues"
 }

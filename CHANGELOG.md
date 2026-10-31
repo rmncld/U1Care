@@ -1,3 +1,7 @@
+# 0.4.2
+
+Restore the dashboard logo alongside the custom printer name. Repair only the exact default banner, with a backup; retain customized headers, dates and service records. Document HACS update detection and its custom-repository polling interval. [Release details](docs/RELEASE-0.4.2.md).
+
 # 0.4.1
 
 Pogo contacts now display both remaining days and remaining changes, including unknown or overdue values. Existing dashboards update through the sensor state; no storage or dashboard migration. Dates and maintenance events are preserved. [Release details](docs/RELEASE-0.4.1.md).
