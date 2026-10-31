@@ -27,6 +27,16 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 def _display(status):
+    deadlines = {item.get("metric"): item for item in status.get("deadlines", [])}
+    if "days" in deadlines and "swaps" in deadlines:
+        days = deadlines["days"].get("remaining")
+        swaps = deadlines["swaps"].get("remaining")
+        calendar = ("date inconnue" if days is None else
+                    f"{abs(days):g} j de retard" if days < 0 else f"{days:g} j restants")
+        changes = ("changements inconnus" if swaps is None else
+                   f"{abs(swaps):g} changements dépassés" if swaps < 0 else
+                   f"{swaps:g} changements restants")
+        return f"{status['label']} · {calendar} · {changes}"
     if status.get("remaining") is None:
         return status["label"]
     return f"{status['label']} · {status['remaining']:g} {status['unit']}".strip()
