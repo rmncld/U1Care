@@ -123,6 +123,7 @@ class U1Overall(U1Entity, SensorEntity):
         return {"level": self.coordinator.data["overall"]["level"],
                 "catalog_version": self.coordinator.catalog["version"],
                 "printer_error": self.coordinator.data["connection_error"],
+                "head_counter_error": self.coordinator.data["head_error"],
                 "usage": "Configurer l’intégration pour consigner un entretien et lire sa procédure"}
 
 

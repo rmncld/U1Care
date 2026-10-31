@@ -124,7 +124,7 @@ class U1Coordinator(DataUpdateCoordinator):
                     except OSError as err:
                         raise UpdateFailed("Toolhead counters could not be saved") from err
             if error:
-                self.connected = False
+                self.connected = head_error == "ok"
                 self.error = error
                 self.current_hours = None
             else:
@@ -183,4 +183,7 @@ class U1Coordinator(DataUpdateCoordinator):
             await backup.async_save(self.state)
             await self.store.async_save(next_state)
             self.state = next_state
+            self.current_swaps = None
+            self.current_hours = None
+            self.heads = parse_heads({})
             self.async_set_updated_data(self.build_snapshot())

@@ -180,13 +180,15 @@ async def test_v036_entry_migration_preserves_store_options_and_unique_ids(hass)
         title='U1 Care · 192.168.1.50', data={'host': '192.168.1.50', 'port': 7125},
         options={'dashboard_initialized': True, 'dashboard_path': 'u1-care-existing'},
         source='user', unique_id=None, discovery_keys=MappingProxyType({}), subentries_data=None)
+    with patch('homeassistant.config_entries.ConfigEntries.async_setup', return_value=False):
+        await hass.config_entries.async_add(entry)
     registry = er.async_get(hass)
     registered = registry.async_get_or_create('sensor', 'u1_companion', entry.entry_id + '_pogo-contacts',
                                              suggested_object_id='my_existing_pogo', config_entry=entry)
     await Store(hass, 1, 'u1_companion.' + entry.entry_id).async_save(old)
     with patch('custom_components.u1_companion.api.U1Api.async_hours', return_value=2.0), patch(
         'custom_components.u1_companion.api.U1Api.async_heads', return_value=heads(), side_effect=None):
-        await hass.config_entries.async_add(entry)
+        assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
         assert entry.version == 2 and entry.title == 'Mon atelier'
         assert entry.options['dashboard_path'] == 'u1-care-existing'
@@ -194,3 +196,51 @@ async def test_v036_entry_migration_preserves_store_options_and_unique_ids(hass)
         assert entry.runtime_data.state['tasks'] == old['tasks']
         assert entry.runtime_data.data['swaps'] == 1000
         assert registry.async_get_entity_id('sensor', 'u1_companion', entry.entry_id + '_pogo-contacts') == registered.entity_id
+
+
+@pytest.mark.asyncio
+async def test_native_counter_reset_acknowledgement_and_manual_resume(hass):
+    found = {'port': 7125, 'hours': 2.0, 'moonraker_version': 'test'}
+    with patch('custom_components.u1_companion.config_flow.async_discover', return_value=found), patch(
+        'custom_components.u1_companion.api.U1Api.async_hours', return_value=2.0), patch(
+        'custom_components.u1_companion.api.U1Api.async_heads', return_value=heads(), side_effect=None) as reading:
+        result = await hass.config_entries.flow.async_init('u1_companion', context={'source': 'user'},
+            data={'host': '192.168.1.50', 'name': 'Atelier'})
+        await hass.async_block_till_done()
+        entry = result['result']
+        c = entry.runtime_data
+        reading.return_value = heads((1, 42, 18, 9))
+        await c.async_refresh()
+        assert c.data['swaps'] is None and c.head_error == 'head_counter_reset'
+        assert c.state['machine']['swaps'] == 335
+        menu = await hass.config_entries.options.async_init(entry.entry_id)
+        form = await hass.config_entries.options.async_configure(menu['flow_id'], {'next_step_id': 'resume'})
+        bad = await hass.config_entries.options.async_configure(form['flow_id'], {'confirm': False})
+        assert bad['errors']['base'] == 'confirm_required'
+        await hass.config_entries.options.async_configure(form['flow_id'], {'confirm': True})
+        assert c.data['swaps'] == 335 and c.head_error == 'ok'
+        reading.return_value = heads((2, 42, 18, 9))
+        await c.async_refresh()
+        assert c.data['swaps'] == 336
+        menu = await hass.config_entries.options.async_init(entry.entry_id)
+        form = await hass.config_entries.options.async_configure(menu['flow_id'], {'next_step_id': 'counters'})
+        await hass.config_entries.options.async_configure(form['flow_id'], {'swaps': 2000})
+        reading.return_value = heads((5, 42, 18, 9))
+        await c.async_refresh()
+        assert c.data['swaps'] == 2000 and c.data['swaps_source'] == 'manual'
+        menu = await hass.config_entries.options.async_init(entry.entry_id)
+        form = await hass.config_entries.options.async_configure(menu['flow_id'], {'next_step_id': 'resume'})
+        await hass.config_entries.options.async_configure(form['flow_id'], {'confirm': True})
+        assert c.data['swaps'] == 2000
+        reading.return_value = heads((6, 42, 18, 9))
+        await c.async_refresh()
+        assert c.data['swaps'] == 2001
+
+
+@pytest.mark.asyncio
+async def test_no_new_demo_and_invalid_name_or_future_date(hass):
+    result = await hass.config_entries.flow.async_init('u1_companion', context={'source': 'user'}, data={'demo': True})
+    assert result['type'] == 'form' and result['errors']['host'] == 'invalid_host'
+    result = await hass.config_entries.flow.async_configure(result['flow_id'], {
+        'host': '192.168.1.50', 'name': ' ', 'start_date': '2099-01-01'})
+    assert result['errors'] == {'name': 'invalid_name', 'start_date': 'invalid_date'}

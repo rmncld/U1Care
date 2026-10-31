@@ -1,7 +1,6 @@
 """IP-only setup and guided local maintenance forms."""
 
 from copy import deepcopy
-from datetime import date
 import json
 
 try:
@@ -13,6 +12,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers import selector
+from homeassistant.util import dt as dt_util
 
 from .api import CannotConnect, InvalidAuth, Unsupported, async_discover, normalize_host
 from .const import DOMAIN
@@ -40,13 +40,14 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except (ValueError, KeyError):
                 errors["host"] = "invalid_host"
             else:
-                name = user_input.get("name", self._details.get("name", "Mon U1")).strip()
+                current_name = self._reconfigure.data.get("name", "Mon U1") if self._reconfigure else "Mon U1"
+                name = user_input.get("name", self._details.get("name", current_name)).strip()
                 start = user_input.get("start_date", self._details.get("start_date"))
                 if not name or len(name) > 80:
                     errors["name"] = "invalid_name"
                 if start:
                     try:
-                        if model.valid_day(start) > date.today():
+                        if model.valid_day(start) > dt_util.now().date():
                             raise ValueError("invalid_date")
                     except (ValueError, TypeError):
                         errors["start_date"] = "invalid_date"
@@ -63,10 +64,12 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data = {**(self._reconfigure.data if self._reconfigure else {}), **self._details}
         start_field = (vol.Optional("start_date", default=data["start_date"])
                        if data.get("start_date") else vol.Optional("start_date"))
-        return vol.Schema({
+        schema = {
             vol.Required("host", default=self._host or data.get("host", "")): str,
-            vol.Required("name", default=data.get("name", "Mon U1")): str,
-            start_field: selector.DateSelector()})
+            vol.Required("name", default=data.get("name", "Mon U1")): str}
+        if self._reconfigure is None:
+            schema[start_field] = selector.DateSelector()
+        return vol.Schema(schema)
 
     async def _try_connect(self, api_key=""):
         try:
