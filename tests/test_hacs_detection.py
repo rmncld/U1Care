@@ -6,7 +6,6 @@ GitHub's response and scheduling are test doubles; selection and polling are HAC
 """
 import ast
 import asyncio
-from copy import deepcopy
 import json
 from pathlib import Path
 from types import SimpleNamespace as NS
@@ -75,14 +74,12 @@ async def test_upstream_periodic_poll_signals_new_release_without_download(insta
     repo.hacs = hacs
     repo.async_get_legacy_repository_object = AsyncMock(return_value=(NS(full_name='rmncld/U1Care', attributes={}), 'etag'))
     repo.get_tree = AsyncMock(return_value=[NS(full_path='custom_components/u1_companion/manifest.json')])
-    repo.update_repository = AsyncMock(side_effect=lambda **kw: repo.common_update_data())
+    repo.update_repository = AsyncMock()
     # AsyncMock's side_effect is explicitly async so its coroutine is awaited.
     async def refresh(**kwargs):
         await repo.common_update_data()
     repo.update_repository.side_effect = refresh
     repo.async_download_repository = AsyncMock()
-    before = deepcopy({'startDate': '2026-10-30', 'history': [{'note': 'entretien à conserver'}]})
-    maintenance = deepcopy(before)
     poll = upstream_methods('base.py', 'HacsBase', ['async_update_downloaded_custom_repositories'])['async_update_downloaded_custom_repositories']
     poll.__globals__['asyncio'] = asyncio
     await poll(hacs)
@@ -97,4 +94,3 @@ async def test_upstream_periodic_poll_signals_new_release_without_download(insta
     entity = Entity()
     entity.repository = repo
     assert entity.state == 'on'
-    assert maintenance == before
