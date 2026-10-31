@@ -8,6 +8,8 @@ Every task has its own completion date and next due date. Recording belt mainten
 
 ## Home Assistant
 
+**Version 0.4.0** reads the real change counters of all four toolheads using the working U1Deck protocol. The cumulative pogo sensor preserves existing maintenance references and detects firmware counter resets. Setup asks for a custom name and offers a commissioning date, with no demo option. [Release notes and HACS update](docs/RELEASE-0.4.0.md).
+
 Adding your U1 automatically creates a dashboard in the sidebar. It shows the remaining days or cycles, maintenance status and links to each procedure.
 
 - **OK** — up to date.
@@ -50,19 +52,19 @@ You can customize the dashboard using Home Assistant’s built-in editor. U1 Car
 1. Open the HACS link, add the custom repository and download **U1 Care**.
 2. Restart Home Assistant.
 3. Go to **Settings → Devices & services → Add integration → U1 Care**.
-4. Enter your U1’s local IP address.
+4. Enter your U1’s local IP address, choose its display name and provide its commissioning date if known.
 
 If the link does not work, add `https://github.com/rmncld/U1Care` under **HACS → ⋮ menu → Custom repositories**, with **Integration** as the category.
 
 Home Assistant connects directly to the printer. No extra computer needs to stay on. If your printer requires an API key, U1 Care asks for it on a second screen.
 
-**Demo mode** lets you explore the dashboard without a printer or a real IP address.
+Existing demo entries remain separate from real printers. Normal setup connects a real U1.
 
 For a manual installation, copy `custom_components/u1_companion` into `/config/custom_components/`, then restart Home Assistant.
 
 ### Dates and maintenance records
 
-A printer’s IP address cannot reveal when you last performed maintenance. When that date is missing, the task stays **UNKNOWN**. You can enter a commissioning date once in the integration’s configuration options. Tasks recorded later use their own completion dates.
+A printer’s IP address cannot reveal when you last performed maintenance. When that date is missing, the task stays **UNKNOWN**. The add-printer form offers a commissioning date and a custom name. Existing installations retain their dates; a known date can also be entered in the integration’s options. Tasks recorded later use their own completion dates.
 
 The **SOON** warning is an application setting, with a default of seven days. It is separate from Snapmaker’s maintenance intervals.
 

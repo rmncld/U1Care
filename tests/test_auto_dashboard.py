@@ -1,3 +1,4 @@
+from conftest import legacy_demo
 """Exercise the actual Lovelace collection, storage, panels and edit APIs."""
 import json
 import pytest
@@ -17,7 +18,7 @@ async def start_ui(hass):
 
 
 async def add_demo(hass):
-    result = await hass.config_entries.flow.async_init(DOMAIN, context={'source': SOURCE_USER}, data={'demo': True})
+    result = await legacy_demo(hass)
     await hass.async_block_till_done()
     return result['result']
 
@@ -102,3 +103,37 @@ async def test_interrupted_first_save_can_retry_without_duplicates(hass):
     items = _dashboard_collection(hass).async_items()
     assert len([i for i in items if i['url_path'] == path]) == 1
     assert len((await hass.data[LOVELACE_DATA].dashboards[path].async_load(False))['views']) == 8
+
+
+@pytest.mark.asyncio
+async def test_v036_dashboard_appends_once_preserves_customization_and_hub(hass):
+    from copy import deepcopy
+    from homeassistant.helpers.storage import Store
+    from custom_components.u1_companion.auto_dashboard import async_upgrade_counters
+    await start_ui(hass)
+    entry = await add_demo(hass)
+    path = entry.options['dashboard_path']
+    dashboard = hass.data[LOVELACE_DATA].dashboards[path]
+    old = await dashboard.async_load(False)
+    old['views'][0]['sections'][1]['cards'].pop()  # v0.3.6 has no counters.
+    old['views'][0]['title'] = 'Personnalisé'
+    await dashboard.async_save(old)
+    options = dict(entry.options)
+    options.pop('counter_dashboard_version', None)
+    hass.config_entries.async_update_entry(entry, options=options)
+    collection = _dashboard_collection(hass)
+    await collection.async_create_item({'url_path': 'lemyo-hub', 'title': 'LEMYO Hub',
+        'show_in_sidebar': True, 'require_admin': False, 'mode': 'storage'})
+    hub = hass.data[LOVELACE_DATA].dashboards['lemyo-hub']
+    hub_config = {'views': [{'title': 'LEMYO Hub', 'cards': [{'type': 'markdown', 'content': 'keep me'}]}]}
+    await hub.async_save(hub_config)
+    await async_upgrade_counters(hass, entry)
+    updated = await dashboard.async_load(False)
+    assert updated['views'][:-1] == old['views']
+    assert updated['views'][-1]['path'] == 'compteurs-u1'
+    assert len(updated['views'][-1]['cards'][0]['entities']) == 5
+    backup = await Store(hass, 1, f'u1_companion.{entry.entry_id}.dashboard_before_040').async_load()
+    assert backup == old
+    await async_upgrade_counters(hass, entry)
+    assert await dashboard.async_load(False) == updated
+    assert await hub.async_load(False) == hub_config

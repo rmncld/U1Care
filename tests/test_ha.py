@@ -20,15 +20,15 @@ async def test_real_setup_ip_only_entities_and_duplicate(hass):
         "custom_components.u1_companion.api.U1Api.async_hours", return_value=2.0):
         result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER})
         assert result["type"] == "form"
-        assert len(result["data_schema"].schema) == 2
+        assert len(result["data_schema"].schema) == 3
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {"host": "192.168.1.50"})
         assert result["type"] == "create_entry"
         entry = result["result"]
         await hass.async_block_till_done()
         assert entry.state == ConfigEntryState.LOADED
         assert entry.runtime_data.state["machine"]["startDate"] is None
-        entities = [e for e in hass.states.async_all() if "u1_care" in e.entity_id]
-        assert len(entities) == 10
+        entities = list(hass.states.async_all())
+        assert len(entities) == 15
         assert any(e.state == "2.0" for e in entities)
         assert any(e.state == "INCONNU" for e in entities)
         duplicate = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER}, data={"host": "192.168.1.50"})
@@ -143,7 +143,7 @@ async def test_real_reconfigure_keeps_entry_events_and_entities(hass):
         assert result["type"] == "abort" and result["reason"] == "reconfigure_successful"
         await hass.async_block_till_done()
         assert entry.data["host"] == "192.168.1.56"
-        assert entry.title == "U1 Care · 192.168.1.56"
+        assert entry.title == "Mon U1"
         assert entry.runtime_data.state["history"][0]["note"] == "keep me"
         assert {s.entity_id for s in hass.states.async_all()} == entity_ids
 

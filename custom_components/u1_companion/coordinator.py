@@ -12,7 +12,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
-from .api import CannotConnect, InvalidAuth, U1Api, Unsupported
+from .api import CannotConnect, InvalidAuth, U1Api, Unsupported, parse_heads
 from .const import DOMAIN, POLL_SECONDS, STORAGE_VERSION
 from . import model
 
@@ -35,6 +35,10 @@ class U1Coordinator(DataUpdateCoordinator):
         self.error = "unknown"
         self.last_success = None
         self.current_hours = None
+        self.heads = parse_heads({})
+        self.current_swaps = None
+        self.head_error = "unknown"
+        self.accept_head_reset = False
 
     def today(self):
         return dt_util.now().date().isoformat()
@@ -46,6 +50,14 @@ class U1Coordinator(DataUpdateCoordinator):
         self.catalog = await self.hass.async_add_executor_job(read_catalog)
         stored = await self.store.async_load()
         self.state = model.validate(stored, self.catalog) if stored is not None else model.fresh(self.catalog)
+        if stored is None and not self.demo:
+            self.state["machine"]["name"] = self.entry.data.get("name", "Mon U1")
+            start = self.entry.data.get("start_date")
+            if start:
+                self.state = model.reference_date(self.state, start, self.today(), self.catalog)
+            await self.store.async_save(self.state)
+        elif stored is not None and self.entry.data.get("name"):
+            self.state["machine"]["name"] = self.entry.data["name"]
         if self.demo:
             self.state["demo"] = True
             if stored is None:
@@ -60,7 +72,12 @@ class U1Coordinator(DataUpdateCoordinator):
         view = deepcopy(self.state)
         if view["machine"].get("hoursSource") == "moonraker-history":
             view["machine"]["hours"] = self.current_hours
+        if view["machine"].get("swapsSource") == "u1-extruders":
+            view["machine"]["swaps"] = self.current_swaps
         return {**model.snapshot(view, self.today()), "hours": view["machine"]["hours"],
+                "swaps": view["machine"]["swaps"], "heads": deepcopy(self.heads),
+                "head_error": self.head_error,
+                "swaps_source": view["machine"].get("swapsSource", "manual" if view["machine"]["swaps"] is not None else "unknown"),
                 "hours_source": view["machine"].get("hoursSource", "unknown"),
                 "demo": self.demo, "connected": self.connected, "connection_error": self.error,
                 "last_success": self.last_success, "catalog_version": self.catalog["version"]}
@@ -79,9 +96,35 @@ class U1Coordinator(DataUpdateCoordinator):
             hours, error = None, "history_missing"
         except CannotConnect:
             hours, error = None, "cannot_connect"
+        try:
+            heads = await self.api.async_heads()
+            head_error = "ok"
+        except InvalidAuth:
+            heads, head_error = parse_heads({}), "invalid_auth"
+        except Unsupported:
+            heads, head_error = parse_heads({}), "heads_missing"
+        except CannotConnect:
+            heads, head_error = parse_heads({}), "cannot_connect"
         async with self.lock:
+            self.heads = heads
+            self.head_error = head_error
+            self.current_swaps = None
+            if head_error == "ok":
+                try:
+                    next_state = model.apply_heads(self.state, heads, self.accept_head_reset)
+                except ValueError as err:
+                    self.head_error = "head_counter_reset" if str(err) == "head_counter_reset" else "heads_missing"
+                else:
+                    try:
+                        if next_state != self.state:
+                            await self.store.async_save(model.validate(next_state, self.catalog))
+                        self.state = next_state
+                        self.current_swaps = self.state["machine"]["swaps"]
+                        self.accept_head_reset = False
+                    except OSError as err:
+                        raise UpdateFailed("Toolhead counters could not be saved") from err
             if error:
-                self.connected = False
+                self.connected = head_error == "ok"
                 self.error = error
                 self.current_hours = None
             else:
@@ -116,6 +159,8 @@ class U1Coordinator(DataUpdateCoordinator):
             # A stale historical reading is not a current maintenance counter.
             if state["machine"].get("hoursSource") == "moonraker-history" and self.current_hours is None:
                 state["machine"]["hours"] = None
+            if state["machine"].get("swapsSource") == "u1-extruders" and self.current_swaps is None:
+                state["machine"]["swaps"] = None
             return model.complete(state, task_id, checked, note, completed_day,
                                   self.today(), self.catalog)
         await self.async_change(change)
@@ -138,4 +183,7 @@ class U1Coordinator(DataUpdateCoordinator):
             await backup.async_save(self.state)
             await self.store.async_save(next_state)
             self.state = next_state
+            self.current_swaps = None
+            self.current_hours = None
+            self.heads = parse_heads({})
             self.async_set_updated_data(self.build_snapshot())

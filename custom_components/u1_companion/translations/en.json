@@ -4,10 +4,11 @@
     "step": {
       "user": {
         "title": "Connect your U1",
-        "description": "Enter only the local IP address of your Snapmaker U1. Moonraker is checked automatically. No PC bridge or YAML is needed. Unknown maintenance dates remain unknown.\n\nTo test without a U1, enable Demo. Hours and dates are simulated and separate from real records. Add a separate integration with an IP for a real printer.",
+        "description": "Enter your U1 local IP, a custom printer name and the commissioning date if known. Readings come directly from Moonraker; no PC bridge or YAML required.",
         "data": {
           "host": "U1 IP address",
-          "demo": "Demo without a printer (leave IP blank)"
+          "name": "Printer name",
+          "start_date": "Commissioning date (if known)"
         }
       },
       "auth": {
@@ -22,7 +23,9 @@
       "invalid_host": "Enter only a private LAN IPv4 address, for example 192.168.1.50.",
       "cannot_connect": "Cannot reach the U1. Check its power, IP address and local network.",
       "unsupported": "No usable Moonraker history was found on ports 80 or 7125.",
-      "invalid_auth": "Moonraker did not accept this API key."
+      "invalid_auth": "Moonraker did not accept this API key.",
+      "invalid_name": "Enter a name between 1 and 80 characters.",
+      "invalid_date": "Enter a valid date that is not in the future."
     },
     "abort": {
       "already_configured": "This IP is already configured. To change an existing address, use Reconfigure.",
@@ -79,7 +82,7 @@
       },
       "counters": {
         "title": "Fallback counters",
-        "description": "Optional: total toolhead swaps can be read from the U1 screen. They are never inferred from hours. Leave unused fields blank. Entering hours enables manual fallback; Resume automatic readings switches back. No intervals are required.",
+        "description": "Manual fallback only: changes are normally read from the four U1 extruders. Entering a total pauses its automatic reading until Resume. Leave unused fields blank.",
         "data": {
           "swaps": "Total toolhead swaps (U1 screen)",
           "hours": "Total hours (manual fallback)"
@@ -87,9 +90,9 @@
       },
       "resume": {
         "title": "Resume Moonraker readings",
-        "description": "Resume direct polling. If retained history was reset, accept the new counter as a new reference. Previous hour references are preserved separately. Dates and maintenance events remain intact.",
+        "description": "Resume automatic history and four-head readings. If a head counter decreased, confirmation accepts its new baseline without decreasing the cumulative total or erasing maintenance events. Changes during that reset cannot be reconstructed.",
         "data": {
-          "confirm": "Resume readings and accept a new counter reference if necessary"
+          "confirm": "Resume and accept a new baseline if a counter was reset"
         }
       },
       "import_backup": {

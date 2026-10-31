@@ -31,3 +31,26 @@ jobs:
           category: integration
           ignore: brands
           comment: "false"
+  release:
+    needs: [home-assistant, hacs]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: u1care-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish tested HACS version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          version=$(python -c "import json; print(json.load(open('custom_components/u1_companion/manifest.json'))['version'])")
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "Release v$version already exists; leaving it unchanged."
+            exit 0
+          fi
+          gh release create "v$version" --target "$RELEASE_SHA" --title "U1 Care $version" --notes-file "docs/RELEASE-$version.md" --latest

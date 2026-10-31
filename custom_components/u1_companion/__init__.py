@@ -9,6 +9,22 @@ from .const import DOMAIN, PLATFORMS, STORAGE_VERSION
 from .coordinator import U1Coordinator
 
 
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Retain entry/entity IDs, options, Store version and maintenance records."""
+    if entry.version > 2:
+        return False
+    if entry.version == 1:
+        data = dict(entry.data)
+        if not data.get("demo"):
+            stored = await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}").async_load()
+            name = (stored or {}).get("machine", {}).get("name") or "Mon U1"
+            data.setdefault("name", name)
+            hass.config_entries.async_update_entry(entry, data=data, title=data["name"], version=2)
+        else:
+            hass.config_entries.async_update_entry(entry, version=2)
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = U1Coordinator(hass, entry)
     await coordinator.async_load()

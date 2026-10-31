@@ -22,6 +22,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     }, "async_complete_maintenance")
     coordinator = entry.runtime_data
     async_add_entities([U1Hours(coordinator), U1Overall(coordinator),
+                        U1Swaps(coordinator), *(U1HeadCounter(coordinator, i) for i in range(4)),
                         *(U1Maintenance(coordinator, t) for t in coordinator.catalog["tasks"])])
 
 
@@ -57,6 +58,55 @@ class U1Hours(U1Entity, SensorEntity):
                 "scope": "Historique conservé ; hors impression en cours ; total à vie non garanti"}
 
 
+class U1Swaps(U1Entity, SensorEntity):
+    _attr_name = "Changements de tête cumulés"
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+    _attr_icon = "mdi:swap-horizontal"
+
+    def __init__(self, coordinator):
+        super().__init__(coordinator, "toolhead_swaps")
+
+    @property
+    def native_value(self):
+        return self.coordinator.data["swaps"]
+
+    @property
+    def available(self):
+        return super().available and self.native_value is not None
+
+    @property
+    def extra_state_attributes(self):
+        return {"source": self.coordinator.data["swaps_source"],
+                "counter_error": self.coordinator.data["head_error"],
+                "printer_name": self.coordinator.state["machine"]["name"],
+                "start_date": self.coordinator.state["machine"].get("startDate"),
+                "scope": "Somme T1–T4 puis deltas ; référence manuelle conservée si supérieure"}
+
+
+class U1HeadCounter(U1Entity, SensorEntity):
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+    _attr_icon = "mdi:printer-3d-nozzle-outline"
+
+    def __init__(self, coordinator, index):
+        super().__init__(coordinator, f"head_{index + 1}_switch_count")
+        self.index = index
+        self._attr_name = f"T{index + 1} changements"
+
+    @property
+    def native_value(self):
+        return self.coordinator.data["heads"][self.index]["switch_count"]
+
+    @property
+    def available(self):
+        return super().available and self.native_value is not None
+
+    @property
+    def extra_state_attributes(self):
+        return {**self.coordinator.data["heads"][self.index],
+                "source": "extruder" + (str(self.index) if self.index else ""),
+                "counter_error": self.coordinator.data["head_error"]}
+
+
 class U1Overall(U1Entity, SensorEntity):
     _attr_name = "Maintenance générale"
     _attr_icon = "mdi:clipboard-pulse-outline"
@@ -73,6 +123,7 @@ class U1Overall(U1Entity, SensorEntity):
         return {"level": self.coordinator.data["overall"]["level"],
                 "catalog_version": self.coordinator.catalog["version"],
                 "printer_error": self.coordinator.data["connection_error"],
+                "head_counter_error": self.coordinator.data["head_error"],
                 "usage": "Configurer l’intégration pour consigner un entretien et lire sa procédure"}
 
 

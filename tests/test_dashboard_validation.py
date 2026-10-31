@@ -1,3 +1,4 @@
+from conftest import legacy_demo
 from unittest.mock import patch
 import pytest
 from homeassistant.config_entries import SOURCE_USER
@@ -7,7 +8,7 @@ from custom_components.u1_companion.const import DOMAIN
 
 @pytest.mark.asyncio
 async def test_dashboard_validation_targets_one_item_and_persists(hass):
-    result = await hass.config_entries.flow.async_init(DOMAIN, context={'source': SOURCE_USER}, data={'demo': True})
+    result = await legacy_demo(hass)
     await hass.async_block_till_done()
     entry = result['result']
     c = entry.runtime_data
@@ -36,7 +37,7 @@ async def test_dashboard_validation_targets_one_item_and_persists(hass):
 async def test_portable_dashboard_uses_registered_entities_and_user_path(hass):
     from custom_components.u1_companion.dashboard_config import async_dashboard_config
     import json
-    result = await hass.config_entries.flow.async_init(DOMAIN, context={'source': SOURCE_USER}, data={'demo': True})
+    result = await legacy_demo(hass)
     await hass.async_block_till_done()
     entry = result['result']
     config = await async_dashboard_config(hass, entry)

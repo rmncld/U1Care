@@ -63,6 +63,15 @@ def validate(state, catalog):
         raise ValueError("Invalid machine")
     number(machine["hours"], nullable=True)
     number(machine["swaps"], nullable=True, integer=True)
+    telemetry = state.get("toolheadCounters")
+    if telemetry is not None:
+        if not isinstance(telemetry, dict) or set(telemetry) != {"last", "total"}:
+            raise ValueError("Invalid toolhead counters")
+        if not isinstance(telemetry["last"], list) or len(telemetry["last"]) != 4:
+            raise ValueError("Invalid toolhead counters")
+        for value in telemetry["last"]:
+            number(value, integer=True)
+        number(telemetry["total"], integer=True)
     if machine.get("startDate") is not None:
         valid_day(machine["startDate"])
     tasks = state.get("tasks")
@@ -230,4 +239,36 @@ def apply_history(state, hours):
                 task["lastHours"] = None
     next_state["machine"].update(hours=hours, hoursSource="moonraker-history")
     next_state["connection"]["lastReadingHours"] = hours
+    return next_state
+
+
+def apply_heads(state, heads, accept_reset=False):
+    """A sum of four lifetime counts, then positive deltas; never sum snapshots.
+
+    An existing manual total is a floor on initial migration. A decrease in any
+    head requires explicit acknowledgement; old totals and events are retained.
+    Partial snapshots never advance the persisted baseline.
+    """
+    if not isinstance(heads, list) or len(heads) != 4:
+        raise ValueError("heads_missing")
+    counts = [h.get("switch_count") for h in heads]
+    for value in counts:
+        number(value, integer=True)
+    next_state = deepcopy(state)
+    machine = next_state["machine"]
+    if machine.get("swapsSource") == "manual":
+        return next_state
+    previous = next_state.get("toolheadCounters")
+    if previous is None:
+        total = max(machine.get("swaps") or 0, sum(counts))
+    else:
+        decreased = any(a < b for a, b in zip(counts, previous["last"]))
+        if decreased and not accept_reset:
+            raise ValueError("head_counter_reset")
+        total = previous["total"] + (0 if decreased else sum(
+            a - b for a, b in zip(counts, previous["last"])))
+        total = max(total, machine.get("swaps") or 0)
+    number(total, integer=True)
+    next_state["toolheadCounters"] = {"last": counts, "total": total}
+    machine.update(swaps=total, swapsSource="u1-extruders")
     return next_state

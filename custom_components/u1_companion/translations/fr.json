@@ -4,10 +4,11 @@
     "step": {
       "user": {
         "title": "Connecter votre U1",
-        "description": "Saisissez uniquement l’adresse IP locale de votre Snapmaker U1. Companion recherche son accès Moonraker et installe les capteurs. Aucun PC ni YAML nécessaire. Les dates d’entretien inconnues ne seront pas inventées.\n\nPour tester sans U1, cochez Démonstration. Les heures et dates sont simulées, séparées du suivi réel. Pour une vraie U1, ajoutez ensuite une nouvelle intégration avec son IP.",
+        "description": "Indiquez l’adresse IP locale de votre U1, son nom et sa date de mise en service si elle est connue. Les relevés proviennent directement de Moonraker ; aucune passerelle PC ni YAML nécessaire.",
         "data": {
           "host": "Adresse IP de la U1",
-          "demo": "Démonstration sans imprimante (laisser l’IP vide)"
+          "name": "Nom de l’imprimante",
+          "start_date": "Date de mise en service (si connue)"
         }
       },
       "auth": {
@@ -22,7 +23,9 @@
       "invalid_host": "Saisissez une adresse IPv4 locale seule, par exemple 192.168.1.50.",
       "cannot_connect": "U1 inaccessible. Vérifiez son alimentation, son IP et sa connexion au même réseau que Home Assistant.",
       "unsupported": "L’accès détecté ne fournit pas un historique Moonraker exploitable. Les ports essayés sont 80 et 7125.",
-      "invalid_auth": "La clé n’est pas acceptée par Moonraker."
+      "invalid_auth": "La clé n’est pas acceptée par Moonraker.",
+      "invalid_name": "Indiquez un nom de 1 à 80 caractères.",
+      "invalid_date": "Indiquez une date valide qui ne soit pas dans le futur."
     },
     "abort": {
       "already_configured": "Cette IP est déjà configurée. Pour une IP modifiée, utilisez Reconfigurer sur l’intégration existante.",
@@ -79,7 +82,7 @@
       },
       "counters": {
         "title": "Compteurs de secours",
-        "description": "Facultatif : les cycles sont consultables sur l’écran U1 et ne sont pas déduits des heures. Laissez les champs inutiles vides. Saisir des heures active le repli manuel ; utilisez « Reprendre la lecture automatique » pour revenir à Moonraker. Les intervalles ne sont jamais à saisir.",
+        "description": "Secours manuel seulement : les changements sont normalement lus dans les quatre extrudeurs U1. Saisir un cumul suspend sa lecture automatique jusqu’à « Reprendre ». Laisser vides les champs inutilisés.",
         "data": {
           "swaps": "Changements de tête cumulés (écran U1)",
           "hours": "Heures cumulées (repli manuel)"
@@ -87,9 +90,9 @@
       },
       "resume": {
         "title": "Reprendre les heures Moonraker",
-        "description": "Réactive la lecture directe. Si l’historique a été réinitialisé, le nouveau compteur est accepté comme une nouvelle référence : les anciennes références horaires sont conservées pour mémoire. Les dates et événements d’entretien restent intacts.",
+        "description": "Reprendre les relevés automatiques des heures et des quatre têtes. Si un compteur de tête a diminué, confirmer accepte la nouvelle référence sans diminuer le cumul ni effacer les entretiens. Les changements survenus pendant cette remise à zéro ne peuvent pas être reconstruits.",
         "data": {
-          "confirm": "Je confirme la reprise de lecture et, si nécessaire, le nouveau compteur"
+          "confirm": "Reprendre et accepter une nouvelle référence si un compteur a été remis à zéro"
         }
       },
       "import_backup": {
