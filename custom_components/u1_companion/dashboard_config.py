@@ -3,6 +3,10 @@ import json
 from pathlib import Path
 from homeassistant.helpers import entity_registry as er
 
+BANNER_LOGO = ('<img src="https://raw.githubusercontent.com/rmncld/U1Care/'
+               'f0dd689460920410762660dd5ac9122232dc142c/assets/u1-care-mark.svg" '
+               'width="48" alt="Logo U1 Care">')
+
 KEYS = {'guides': 'linear-shafts', 'carbon': 'carbon-rods', 'z': 'lead-screws',
         'belts': 'timing-belts', 'coupling': 'steel-coupling', 'pogo': 'pogo-contacts',
         'xyz': 'xyz-calibration', 'hours': 'history_hours', 'overall': 'maintenance_overall',
@@ -28,6 +32,6 @@ async def async_dashboard_config(hass, entry, path=None):
     if not entry.data.get('demo'):
         swaps = registry.async_get_entity_id('sensor', 'u1_companion', f'{entry.entry_id}_toolhead_swaps')
         config['views'][0]['sections'][0]['cards'][0]['content'] = (
-            "## {{ state_attr('" + swaps + "', 'printer_name') | e }}"
+            BANNER_LOGO + "\n\n## {{ state_attr('" + swaps + "', 'printer_name') | e }}"
             + '\nSuivi local · Intervalles officiels · Votre imprimante')
     return config

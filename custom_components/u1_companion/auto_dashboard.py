@@ -32,6 +32,7 @@ async def async_ensure_dashboard(hass, entry):
     """Initialize only once; user deletion, edits and metadata stay authoritative."""
     if entry.options.get('dashboard_initialized'):
         await async_upgrade_counters(hass, entry)
+        await async_restore_logo(hass, entry)
         return entry.options.get('dashboard_path')
     from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
     if LOVELACE_DATA not in hass.data:
@@ -75,7 +76,43 @@ async def async_ensure_dashboard(hass, entry):
         hass.config_entries.async_update_entry(entry, options={
             **entry.options, 'dashboard_initialized': True, 'dashboard_path': path})
         await async_upgrade_counters(hass, entry)
+        await async_restore_logo(hass, entry)
         return path
+
+
+async def async_restore_logo(hass, entry):
+    """Repair only the exact shipped 0.4.0/0.4.1 banner on its own dashboard."""
+    if entry.data.get('demo') or entry.options.get('banner_logo_version') == 1:
+        return
+    from copy import deepcopy
+    from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
+    from homeassistant.helpers.storage import Store
+    from .dashboard_config import BANNER_LOGO
+    from .const import DOMAIN, STORAGE_VERSION
+    path = entry.options.get('dashboard_path', '')
+    data = hass.data.get(LOVELACE_DATA)
+    if not path.startswith('u1-care') or data is None or path not in data.dashboards:
+        return
+    dashboard = data.dashboards[path]
+    try:
+        existing = await dashboard.async_load(False)
+    except ConfigNotFound:
+        return
+    fresh = await async_dashboard_config(hass, entry, path)
+    banner = fresh['views'][0]['sections'][0]['cards'][0]['content']
+    old_banner = banner.removeprefix(BANNER_LOGO + '\n\n')
+    updated = deepcopy(existing)
+    for view in updated.get('views', []):
+        for section in view.get('sections', []):
+            for card in section.get('cards', []):
+                if card.get('type') == 'markdown' and card.get('content') == old_banner:
+                    card['content'] = banner
+    if updated != existing:
+        backup = Store(hass, STORAGE_VERSION, f'{DOMAIN}.{entry.entry_id}.dashboard_before_042')
+        if await backup.async_load() is None:
+            await backup.async_save(existing)
+        await dashboard.async_save(updated)
+    hass.config_entries.async_update_entry(entry, options={**entry.options, 'banner_logo_version': 1})
 
 
 async def async_upgrade_counters(hass, entry):

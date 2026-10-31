@@ -8,6 +8,8 @@ Every task has its own completion date and next due date. Recording belt mainten
 
 ## Home Assistant
 
+[Latest release and HACS update detection](docs/RELEASE-0.4.2.md).
+
 **Version 0.4.0** reads the real change counters of all four toolheads using the working U1Deck protocol. The cumulative pogo sensor preserves existing maintenance references and detects firmware counter resets. Setup asks for a custom name and offers a commissioning date, with no demo option. [Release notes and HACS update](docs/RELEASE-0.4.0.md).
 
 Adding your U1 automatically creates a dashboard in the sidebar. It shows the remaining days or cycles, maintenance status and links to each procedure.
@@ -119,7 +121,7 @@ Automatic readings depend on the Moonraker access provided by your printer’s f
 
 These hours come from the print history retained by Moonraker and exclude the current print. They may be incomplete if that history has been cleared. The integration does not send movement commands or G-code to the printer.
 
-Firmware without compatible access, custom ports and HTTPS-only connections are not supported by this version of the integration. Manual counters are available as a fallback. Toolhead change cycles are not read automatically; you can enter the counter shown on the U1’s screen.
+Firmware without compatible access, custom ports and HTTPS-only connections are not supported by this version of the integration. Manual counters are available as a fallback. Toolhead changes are read from the four real U1 extruder counters. Manual fallback is available when firmware readings are missing.
 
 Maintenance dates remain available when the printer is off. A lost connection or a decrease in recorded print history is reported without resetting your maintenance records.
 
