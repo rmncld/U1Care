@@ -1,6 +1,7 @@
 """IP-only setup and guided local maintenance forms."""
 
 from copy import deepcopy
+from datetime import date
 import json
 
 try:
@@ -19,11 +20,12 @@ from . import model
 
 
 class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self):
         self._host = None
         self._reconfigure = None
+        self._details = {}
 
     @staticmethod
     @callback
@@ -33,21 +35,38 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
-            if user_input.get("demo") is True and self._reconfigure is None:
-                return self.async_create_entry(title="U1 Care — DÉMONSTRATION", data={"demo": True})
             try:
                 self._host = normalize_host(user_input["host"])
             except (ValueError, KeyError):
                 errors["host"] = "invalid_host"
             else:
+                name = user_input.get("name", self._details.get("name", "Mon U1")).strip()
+                start = user_input.get("start_date", self._details.get("start_date"))
+                if not name or len(name) > 80:
+                    errors["name"] = "invalid_name"
+                if start:
+                    try:
+                        if model.valid_day(start) > date.today():
+                            raise ValueError("invalid_date")
+                    except (ValueError, TypeError):
+                        errors["start_date"] = "invalid_date"
+                self._details = {"name": name, **({"start_date": start} if start else {})}
+                if errors:
+                    return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors=errors)
                 for entry in self._async_current_entries():
                     if entry.data.get("host") == self._host and entry is not self._reconfigure:
                         return self.async_abort(reason="already_configured")
                 return await self._try_connect()
-        default = self._host or (self._reconfigure.data["host"] if self._reconfigure else "")
-        return self.async_show_form(step_id="user", data_schema=vol.Schema({
-            vol.Optional("host", default=default): str,
-            vol.Optional("demo", default=False): bool}), errors=errors)
+        return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors=errors)
+
+    def _user_schema(self):
+        data = {**(self._reconfigure.data if self._reconfigure else {}), **self._details}
+        start_field = (vol.Optional("start_date", default=data["start_date"])
+                       if data.get("start_date") else vol.Optional("start_date"))
+        return vol.Schema({
+            vol.Required("host", default=self._host or data.get("host", "")): str,
+            vol.Required("name", default=data.get("name", "Mon U1")): str,
+            start_field: selector.DateSelector()})
 
     async def _try_connect(self, api_key=""):
         try:
@@ -56,20 +75,19 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_show_form(step_id="auth", data_schema=self._auth_schema(),
                                         errors={"base": "invalid_auth"} if api_key else {})
         except Unsupported:
-            return self.async_show_form(step_id="user", data_schema=vol.Schema({
-                vol.Required("host", default=self._host): str}), errors={"base": "unsupported"})
+            return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors={"base": "unsupported"})
         except CannotConnect:
-            return self.async_show_form(step_id="user", data_schema=vol.Schema({
-                vol.Required("host", default=self._host): str}), errors={"base": "cannot_connect"})
-        data = {"host": self._host, "port": found["port"], "api_key": api_key,
+            return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors={"base": "cannot_connect"})
+        data = {**(self._reconfigure.data if self._reconfigure else {}), **self._details,
+                "host": self._host, "port": found["port"], "api_key": api_key,
                 "moonraker_version": found["moonraker_version"]}
         if self._reconfigure:
             return self.async_update_reload_and_abort(self._reconfigure, data=data,
-                                                      title=f"U1 Care · {self._host}",
+                                                      title=data.get("name", "Mon U1"),
                                                       reason="reconfigure_successful")
         # No fabricated serial number or mutable IP-based unique_id.
         # Entity IDs are based on HA's persistent entry ID.
-        return self.async_create_entry(title=f"U1 Care · {self._host}", data=data)
+        return self.async_create_entry(title=data.get("name", "Mon U1"), data=data)
 
     @staticmethod
     def _auth_schema():
@@ -194,6 +212,8 @@ class U1OptionsFlow(config_entries.OptionsFlow):
                     if old is not None and value < old:
                         raise ValueError("counter_decreased")
                     state["machine"][key] = value
+                    if key == "swaps":
+                        state["machine"]["swapsSource"] = "manual"
                     if key == "hours":
                         state["machine"]["hoursSource"] = "manual"
                         state["connection"]["enabled"] = False
@@ -220,6 +240,10 @@ class U1OptionsFlow(config_entries.OptionsFlow):
             else:
                 def change(state):
                     state["connection"]["enabled"] = True
+                    if state["machine"].get("swapsSource") == "manual":
+                        state["machine"].pop("swapsSource", None)
+                        if "toolheadCounters" in state:
+                            state["previousToolheadCounters"] = state.pop("toolheadCounters")
                     # Explicitly start a new history domain if a reset was detected.
                     if self.coordinator.error == "history_reset":
                         state["connection"]["previousHistoryHours"] = state["connection"].pop("lastReadingHours", None)
@@ -230,6 +254,7 @@ class U1OptionsFlow(config_entries.OptionsFlow):
                     return state
                 try:
                     await self.coordinator.async_change(change)
+                    self.coordinator.accept_head_reset = self.coordinator.head_error == "head_counter_reset"
                     await self.coordinator.async_request_refresh()
                 except OSError:
                     errors["base"] = "save_failed"

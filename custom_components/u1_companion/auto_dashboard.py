@@ -31,6 +31,7 @@ def _dashboard_collection(hass):
 async def async_ensure_dashboard(hass, entry):
     """Initialize only once; user deletion, edits and metadata stay authoritative."""
     if entry.options.get('dashboard_initialized'):
+        await async_upgrade_counters(hass, entry)
         return entry.options.get('dashboard_path')
     from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
     if LOVELACE_DATA not in hass.data:
@@ -73,7 +74,57 @@ async def async_ensure_dashboard(hass, entry):
                 await dashboard.async_save(config)
         hass.config_entries.async_update_entry(entry, options={
             **entry.options, 'dashboard_initialized': True, 'dashboard_path': path})
+        await async_upgrade_counters(hass, entry)
         return path
+
+
+async def async_upgrade_counters(hass, entry):
+    """Append telemetry once to this entry's dashboard; preserve user cards/views.
+
+    Never search or modify other dashboards (including LEMYO Hub). A deleted
+    dashboard stays deleted. Keep the full original config before any write.
+    """
+    if entry.options.get('counter_dashboard_version', 0) >= 1:
+        return
+    from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
+    from homeassistant.helpers.storage import Store
+    from .const import DOMAIN, STORAGE_VERSION
+    data = hass.data.get(LOVELACE_DATA)
+    path = entry.options.get('dashboard_path')
+    if data is None or not path:
+        return
+    dashboard = data.dashboards.get(path)
+    if dashboard is None:
+        return
+    try:
+        existing = await dashboard.async_load(False)
+    except ConfigNotFound:
+        return
+    from copy import deepcopy
+    config = deepcopy(existing)
+    fresh = await async_dashboard_config(hass, entry, path)
+    card = fresh['views'][0]['sections'][1]['cards'][-1]
+    # Only a dashboard containing this printer's maintenance entities is eligible.
+    target = fresh['views'][1]['sections'][0]['cards'][1]['tap_action']['target']['entity_id']
+    if target not in json.dumps(existing):
+        return
+    if card['entities'][0]['entity'] not in json.dumps(existing):
+        config['views'].append({'title': 'Compteurs U1', 'path': 'compteurs-u1',
+                                'icon': 'mdi:swap-horizontal', 'cards': [card]})
+    # Replace only the shipped default banner, never a customized header.
+    for view in config.get('views', []):
+        for section in view.get('sections', []):
+            for old_card in section.get('cards', []):
+                content = old_card.get('content', '')
+                if '## U1 Care\nVotre atelier, prêt pour la prochaine impression.' in content and not entry.data.get('demo'):
+                    old_card['content'] = fresh['views'][0]['sections'][0]['cards'][0]['content']
+    if config != existing:
+        backup = Store(hass, STORAGE_VERSION, f'{DOMAIN}.{entry.entry_id}.dashboard_before_040')
+        if await backup.async_load() is None:
+            await backup.async_save(existing)
+        await dashboard.async_save(config)
+    hass.config_entries.async_update_entry(entry, options={
+        **entry.options, 'counter_dashboard_version': 1})
 
 
 async def async_initialize_dashboard(hass, entry):

@@ -64,6 +64,32 @@
               "card_mod": {
                 "style": "ha-card { background: #10161d; border: 1px solid #28323c; border-radius: 20px; box-shadow: none; color: #eef2f5; }"
               }
+            },
+            {
+              "type": "entities",
+              "title": "Compteurs des quatre têtes",
+              "entities": [
+                {
+                  "entity": "__ENTITY_swaps__",
+                  "name": "Cumul pogo · T1–T4"
+                },
+                {
+                  "entity": "__ENTITY_head1__",
+                  "name": "T1 · changements"
+                },
+                {
+                  "entity": "__ENTITY_head2__",
+                  "name": "T2 · changements"
+                },
+                {
+                  "entity": "__ENTITY_head3__",
+                  "name": "T3 · changements"
+                },
+                {
+                  "entity": "__ENTITY_head4__",
+                  "name": "T4 · changements"
+                }
+              ]
             }
           ]
         },

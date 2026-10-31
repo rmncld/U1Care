@@ -5,7 +5,8 @@ from homeassistant.helpers import entity_registry as er
 
 KEYS = {'guides': 'linear-shafts', 'carbon': 'carbon-rods', 'z': 'lead-screws',
         'belts': 'timing-belts', 'coupling': 'steel-coupling', 'pogo': 'pogo-contacts',
-        'xyz': 'xyz-calibration', 'hours': 'history_hours', 'overall': 'maintenance_overall'}
+        'xyz': 'xyz-calibration', 'hours': 'history_hours', 'overall': 'maintenance_overall',
+        'swaps': 'toolhead_swaps', **{f'head{i}': f'head_{i}_switch_count' for i in range(1, 5)}}
 
 
 async def async_dashboard_config(hass, entry, path=None):
@@ -23,4 +24,10 @@ async def async_dashboard_config(hass, entry, path=None):
         text = text.replace('**DÉMONSTRATION** · Dates et compteurs fictifs · Aucune U1 connectée',
                             'Suivi local · Intervalles officiels · Votre imprimante')
         text = text.replace('Heures · simulation', 'Heures de l’historique')
-    return json.loads(text)
+    config = json.loads(text)
+    if not entry.data.get('demo'):
+        swaps = registry.async_get_entity_id('sensor', 'u1_companion', f'{entry.entry_id}_toolhead_swaps')
+        config['views'][0]['sections'][0]['cards'][0]['content'] = (
+            "## {{ state_attr('" + swaps + "', 'printer_name') | e }}"
+            + '\nSuivi local · Intervalles officiels · Votre imprimante')
+    return config
