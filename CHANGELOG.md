@@ -1,3 +1,7 @@
+# 0.6.0
+
+Front-facing docking support inspired by the supplied machine reference, with live filament colors and a plain mounted label. No table, cyan marker or mount outline. RFID priority, labeled job fallback and unknown-data handling follow U1Deck. Maintenance records and Hub dashboards are unchanged. [Release details](docs/RELEASE-0.6.0.md).
+
 # 0.5.0
 
 Offer reconnection when a printer entry remains after HACS removal, preserving its records and entities. Add a native four-toolhead card with local U1Deck vector illustrations, individual changes and total. [Release details](docs/RELEASE-0.5.0.md).
