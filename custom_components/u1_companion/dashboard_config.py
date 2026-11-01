@@ -29,6 +29,11 @@ async def async_dashboard_config(hass, entry, path=None):
                             'Suivi local · Intervalles officiels · Votre imprimante')
         text = text.replace('Heures · simulation', 'Heures de l’historique')
     config = json.loads(text)
+    from .heads_card import heads_card
+    head_entities = [registry.async_get_entity_id('sensor', 'u1_companion',
+                    f'{entry.entry_id}_head_{i}_switch_count') for i in range(1, 5)]
+    total = registry.async_get_entity_id('sensor', 'u1_companion', f'{entry.entry_id}_toolhead_swaps')
+    config['views'][0]['sections'][1]['cards'][-1] = heads_card(head_entities, total)
     if not entry.data.get('demo'):
         swaps = registry.async_get_entity_id('sensor', 'u1_companion', f'{entry.entry_id}_toolhead_swaps')
         config['views'][0]['sections'][0]['cards'][0]['content'] = (

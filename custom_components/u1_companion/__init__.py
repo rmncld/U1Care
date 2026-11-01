@@ -26,6 +26,8 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    from .heads_card import async_register_assets
+    await async_register_assets(hass)
     coordinator = U1Coordinator(hass, entry)
     await coordinator.async_load()
     # Offline printing hardware must not hide locally stored maintenance dates.

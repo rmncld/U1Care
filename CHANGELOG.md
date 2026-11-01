@@ -1,3 +1,7 @@
+# 0.5.0
+
+Offer reconnection when a printer entry remains after HACS removal, preserving its records and entities. Add a native four-toolhead card with local U1Deck vector illustrations, individual changes and total. [Release details](docs/RELEASE-0.5.0.md).
+
 # 0.4.2
 
 Restore the dashboard logo alongside the custom printer name. Repair only the exact default banner, with a backup; retain customized headers, dates and service records. Document HACS update detection and its custom-repository polling interval. [Release details](docs/RELEASE-0.4.2.md).

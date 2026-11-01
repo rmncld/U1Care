@@ -33,6 +33,7 @@ async def async_ensure_dashboard(hass, entry):
     if entry.options.get('dashboard_initialized'):
         await async_upgrade_counters(hass, entry)
         await async_restore_logo(hass, entry)
+        await async_upgrade_heads_card(hass, entry)
         return entry.options.get('dashboard_path')
     from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
     if LOVELACE_DATA not in hass.data:
@@ -77,7 +78,58 @@ async def async_ensure_dashboard(hass, entry):
             **entry.options, 'dashboard_initialized': True, 'dashboard_path': path})
         await async_upgrade_counters(hass, entry)
         await async_restore_logo(hass, entry)
+        await async_upgrade_heads_card(hass, entry)
         return path
+
+
+async def async_upgrade_heads_card(hass, entry):
+    """Replace only the shipped counter list, including the known U1Care copy.
+
+    No scans or writes to Hub dashboards, no replacement of customized cards.
+    """
+    from copy import deepcopy
+    from homeassistant.components.lovelace.const import LOVELACE_DATA, ConfigNotFound
+    from homeassistant.helpers import entity_registry as er
+    from homeassistant.helpers.storage import Store
+    from .heads_card import heads_card
+    from .const import DOMAIN, STORAGE_VERSION
+    data = hass.data.get(LOVELACE_DATA)
+    if data is None:
+        return
+    registry = er.async_get(hass)
+    heads = [registry.async_get_entity_id('sensor', DOMAIN, f'{entry.entry_id}_head_{i}_switch_count') for i in range(1, 5)]
+    total = registry.async_get_entity_id('sensor', DOMAIN, f'{entry.entry_id}_toolhead_swaps')
+    if not total or any(e is None for e in heads):
+        return
+    old = {'type': 'entities', 'title': 'Compteurs des quatre têtes', 'entities': [
+        {'entity': total, 'name': 'Cumul pogo · T1–T4'},
+        *[{'entity': entity, 'name': f'T{i} · changements'} for i, entity in enumerate(heads, 1)]]}
+    targets = {entry.options.get('dashboard_path', ''), 'dashboard-u1care'}
+    for path in targets:
+        if not (path.startswith('u1-care') or path == 'dashboard-u1care') or path not in data.dashboards:
+            continue
+        dashboard = data.dashboards[path]
+        try:
+            existing = await dashboard.async_load(False)
+        except ConfigNotFound:
+            continue
+        updated = deepcopy(existing)
+        def replace(cards):
+            for i, card in enumerate(cards):
+                if card == old:
+                    cards[i] = heads_card(heads, total)
+                elif isinstance(card, dict) and isinstance(card.get('cards'), list):
+                    replace(card['cards'])
+        for view in updated.get('views', []):
+            replace(view.get('cards', []))
+            for section in view.get('sections', []):
+                replace(section.get('cards', []))
+        if updated != existing:
+            backup = Store(hass, STORAGE_VERSION, f'{DOMAIN}.{entry.entry_id}.dashboard_before_050')
+            saved = await backup.async_load() or {}
+            if path not in saved:
+                await backup.async_save({**saved, path: existing})
+            await dashboard.async_save(updated)
 
 
 async def async_restore_logo(hass, entry):
@@ -145,7 +197,9 @@ async def async_upgrade_counters(hass, entry):
     target = fresh['views'][1]['sections'][0]['cards'][1]['tap_action']['target']['entity_id']
     if target not in json.dumps(existing):
         return
-    if card['entities'][0]['entity'] not in json.dumps(existing):
+    from homeassistant.helpers import entity_registry as er
+    total = er.async_get(hass).async_get_entity_id('sensor', DOMAIN, f'{entry.entry_id}_toolhead_swaps')
+    if total not in json.dumps(existing):
         config['views'].append({'title': 'Compteurs U1', 'path': 'compteurs-u1',
                                 'icon': 'mdi:swap-horizontal', 'cards': [card]})
     # Replace only the shipped default banner, never a customized header.

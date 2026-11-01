@@ -56,7 +56,9 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors=errors)
                 for entry in self._async_current_entries():
                     if entry.data.get("host") == self._host and entry is not self._reconfigure:
-                        return self.async_abort(reason="already_configured")
+                        self._reconfigure = entry
+                        self._details = {"name": entry.data.get("name") or entry.title}
+                        return await self.async_step_existing()
                 return await self._try_connect()
         return self.async_show_form(step_id="user", data_schema=self._user_schema(), errors=errors)
 
@@ -71,7 +73,18 @@ class U1ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             schema[start_field] = selector.DateSelector()
         return vol.Schema(schema)
 
-    async def _try_connect(self, api_key=""):
+    async def async_step_existing(self, user_input=None):
+        """Recover a retained entry after HACS reinstall, without duplicating it."""
+        if user_input is not None and user_input.get("confirm") is True:
+            return await self._try_connect()
+        return self.async_show_form(step_id="existing", data_schema=vol.Schema({
+            vol.Required("confirm", default=False): bool}),
+            description_placeholders={"name": self._reconfigure.title},
+            errors={"base": "confirm_required"} if user_input is not None else {})
+
+    async def _try_connect(self, api_key=None):
+        if api_key is None:
+            api_key = self._reconfigure.data.get("api_key", "") if self._reconfigure else ""
         try:
             found = await async_discover(async_get_clientsession(self.hass), self._host, api_key)
         except InvalidAuth:

@@ -32,7 +32,7 @@ async def test_real_setup_ip_only_entities_and_duplicate(hass):
         assert any(e.state == "2.0" for e in entities)
         assert any(e.state == "INCONNU" for e in entities)
         duplicate = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER}, data={"host": "192.168.1.50"})
-        assert duplicate["type"] == "abort" and duplicate["reason"] == "already_configured"
+        assert duplicate["type"] == "form" and duplicate["step_id"] == "existing"
 
 
 @pytest.mark.asyncio

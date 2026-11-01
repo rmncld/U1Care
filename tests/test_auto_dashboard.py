@@ -131,7 +131,7 @@ async def test_v036_dashboard_appends_once_preserves_customization_and_hub(hass)
     updated = await dashboard.async_load(False)
     assert updated['views'][:-1] == old['views']
     assert updated['views'][-1]['path'] == 'compteurs-u1'
-    assert len(updated['views'][-1]['cards'][0]['entities']) == 5
+    assert updated['views'][-1]['cards'][0]['content'].count('<img ') == 4
     backup = await Store(hass, 1, f'u1_companion.{entry.entry_id}.dashboard_before_040').async_load()
     assert backup == old
     await async_upgrade_counters(hass, entry)
