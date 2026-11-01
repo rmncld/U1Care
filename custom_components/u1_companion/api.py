@@ -4,16 +4,27 @@ import asyncio
 import ipaddress
 import json
 import math
+import re
 
 import aiohttp
 
 HEADS = ("extruder", "extruder1", "extruder2", "extruder3")
+HEAD_OBJECTS = (*HEADS, "filament_detect", "print_task_config",
+                *(f"filament_motion_sensor e{i}_filament" for i in range(4)))
 
 
 def parse_heads(status):
     """U1Deck model.mjs / diagnostics.mjs: four physical extruder counters."""
     heads = []
-    for name in HEADS:
+    status = status if isinstance(status, dict) else {}
+    def obj(name):
+        value = status.get(name)
+        return value if isinstance(value, dict) else {}
+    def at(values, index):
+        if isinstance(values, list) and index < len(values):
+            return values[index]
+        return values.get(str(index), values.get(index)) if isinstance(values, dict) else None
+    for index, name in enumerate(HEADS):
         raw = status.get(name, {}) if isinstance(status, dict) else {}
         if not isinstance(raw, dict):
             raw = {}
@@ -24,8 +35,28 @@ def parse_heads(status):
                            and isinstance(value, (int, float)) and math.isfinite(value)
                            and 0 <= value <= 1e9 and int(value) == value else None)
         count, last = values.values()
+        rfid = at(obj('filament_detect').get('info'), index)
+        rfid = rfid if isinstance(rfid, dict) else {}
+        rgb = rfid.get('RGB_1')
+        rfid_color = (f'#{rgb & 0xffffff:06x}' if rfid.get('VENDOR') != 'NONE'
+                      and isinstance(rgb, int) and not isinstance(rgb, bool)
+                      and -0x80000000 <= rgb <= 0xffffffff else None)
+        rgba = at(obj('print_task_config').get('filament_color_rgba'), index)
+        job_color = '#' + rgba[:6].lower() if isinstance(rgba, str) and re.fullmatch(r'[0-9a-fA-F]{8}', rgba) else None
+        present = obj(f'filament_motion_sensor e{index}_filament').get('filament_detected')
+        present = present if isinstance(present, bool) else None
+        color = (rfid_color or job_color) if present is True else None
+        state, pin = raw.get('state'), raw.get('active_pin')
+        mounted = (False if state == 'PARKED' else pin
+                   if isinstance(state, str) and state and isinstance(pin, bool) else None)
         heads.append({**values, "since_service": count - last
-                      if count is not None and last is not None and count >= last else None})
+                      if count is not None and last is not None and count >= last else None,
+                      'present': present, 'color': color,
+                      'color_source': ('rfid' if rfid_color else 'job') if color else 'unknown',
+                      'mounted': mounted, 'state': state if isinstance(state, str) else None})
+    if sum(h['mounted'] is True for h in heads) > 1:
+        for head in heads:
+            head['mounted'] = None
     return heads
 
 
@@ -139,8 +170,8 @@ class U1Api:
         available = result.get("objects") if isinstance(result, dict) else None
         if not isinstance(available, list):
             raise Unsupported("objects_missing")
-        objects = {name: None for name in HEADS if name in available}
-        if not objects:
+        objects = {name: None for name in HEAD_OBJECTS if name in available}
+        if not any(name in objects for name in HEADS):
             raise Unsupported("heads_missing")
         headers = {"X-Api-Key": self.api_key} if self.api_key else {}
         try:

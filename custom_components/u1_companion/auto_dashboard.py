@@ -116,7 +116,7 @@ async def async_upgrade_heads_card(hass, entry):
         updated = deepcopy(existing)
         def replace(cards):
             for i, card in enumerate(cards):
-                if card == old:
+                if card == old or card == heads_card(heads, total, live=False):
                     cards[i] = heads_card(heads, total)
                 elif isinstance(card, dict) and isinstance(card.get('cards'), list):
                     replace(card['cards'])

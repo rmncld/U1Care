@@ -3,7 +3,9 @@
 ASSET_URL = '/u1-care-assets/toolhead.svg'
 
 
-def heads_card(head_entities, total_entity):
+def heads_card(head_entities, total_entity, *, live=True):
+    if live:
+        return rack_card(head_entities, total_entity)
     def count(entity):
         return "{{ ('{:,.0f}'.format(states('" + entity + "') | float).replace(',', ' ')) if is_number(states('" + entity + "')) else '—' }}"
     labels = ''.join(f'<th align="center">T{i}</th>' for i in range(1, 5))
@@ -36,6 +38,27 @@ async def async_register_assets(hass):
     lock = hass.data.setdefault('u1_care_assets_lock', asyncio.Lock())
     async with lock:
         if not hass.data.get('u1_care_assets_registered'):
+            from .rack_image import RackImageView
+            http.register_view(RackImageView())
             await http.async_register_static_paths([StaticPathConfig(
                 '/u1-care-assets', str(Path(__file__).with_name('assets')), True)])
             hass.data['u1_care_assets_registered'] = True
+
+
+def rack_card(head_entities, total_entity):
+    """One front-view scene, no table and no colored mount indicator."""
+    legacy = heads_card(head_entities, total_entity, live=False)
+    args, descriptions = [], []
+    for i, entity in enumerate(head_entities, 1):
+        color = "{{ (state_attr('" + entity + "', 'color') or '#9ca3af') | replace('#', '') }}"
+        mounted = "{{ '1' if state_attr('" + entity + "', 'mounted') == true else '0' if state_attr('" + entity + "', 'mounted') == false else 'u' }}"
+        count = "{{ states('" + entity + "') | int if is_number(states('" + entity + "')) else '-' }}"
+        source = ("{% set p = state_attr('" + entity + "', 'present') %}{% set c = state_attr('" + entity + "', 'color_source') %}"
+                  + "{{ 'a' if p == false else 'p' if p != true else 'r' if c == 'rfid' else 'j' if c == 'job' else 'u' }}")
+        args.extend([f'c{i}={color}', f'm{i}={mounted}', f'n{i}={count}', f's{i}={source}'])
+        descriptions.append(f'T{i} : {count} changements')
+    image = '<img src="/u1-care-assets/rack.svg?' + '&amp;'.join(args) + '" width="100%" alt="Support U1, vue de face. ' + '. '.join(descriptions) + '">'
+    content = legacy['content']
+    start, end = content.index('<table'), content.index('</table>') + len('</table>')
+    legacy['content'] = (content[:start] + image + content[end:]).replace('U1 Care heads v1', 'U1 Care heads v3')
+    return legacy
