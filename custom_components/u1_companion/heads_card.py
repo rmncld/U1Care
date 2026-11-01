@@ -20,7 +20,9 @@ def heads_card(head_entities, total_entity):
         + 'Référence pogo conservée : ' + count(total_entity) + ' changements{% endif %}'
         + '{% if not complete %}Lecture incomplète · total indisponible{% endif %}')
     return {'type': 'markdown', 'content': content, 'grid_options': {'columns': 'full'},
-        'card_mod': {'style': 'ha-card { background: #10161d; color: #eef2f5; border: 1px solid #28323c; border-top: 3px solid #a3e635; border-radius: 20px; box-shadow: none; text-align: center; }'}}
+        'card_mod': {'style': {
+            '.': 'ha-card { background: #10161d; color: #eef2f5; border: 1px solid #28323c; border-top: 3px solid #a3e635; border-radius: 20px; box-shadow: none; text-align: center; }',
+            'ha-markdown$': 'table { width: 100%; table-layout: fixed; border-collapse: collapse; } th { padding: 0 0 10px; font-size: 14px; color: #c2ccd5; border: 0; } td { padding: 6px 0 10px; border: 0; font-size: 12px; color: #9daebd; } td strong { font-size: 23px; font-weight: 650; color: #f4f8fb; } h2 { font-size: 22px; font-weight: 650; } h3 { border-top: 1px solid #28323c; padding-top: 20px; margin-bottom: 5px; font-size: 26px; color: #a3e635; }'}}}
 
 
 async def async_register_assets(hass):
