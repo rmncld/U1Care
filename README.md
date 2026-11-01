@@ -8,7 +8,9 @@ Every task has its own completion date and next due date. Recording belt mainten
 
 ## Home Assistant
 
-[Latest release and HACS update detection](docs/RELEASE-0.4.2.md).
+The four-toolhead card uses local U1Deck drawings with each change counter below its head and a complete total below all four. Reinstalling after HACS removal offers reconnection to any retained printer entry, preserving its records.
+
+[Latest release and HACS update detection](docs/RELEASE-0.5.0.md).
 
 **Version 0.4.0** reads the real change counters of all four toolheads using the working U1Deck protocol. The cumulative pogo sensor preserves existing maintenance references and detects firmware counter resets. Setup asks for a custom name and offers a commissioning date, with no demo option. [Release notes and HACS update](docs/RELEASE-0.4.0.md).
 

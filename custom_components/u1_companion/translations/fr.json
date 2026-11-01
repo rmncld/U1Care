@@ -17,6 +17,13 @@
         "data": {
           "api_key": "Clé API Moonraker"
         }
+      },
+      "existing": {
+        "title": "Reconnecter U1 Care",
+        "description": "« {name} » est encore enregistré dans Home Assistant. Le retrait dans HACS ne supprime pas cette entrée. Reconnectez-la pour conserver ses dates, ses entretiens et ses entités, sans créer de doublon.",
+        "data": {
+          "confirm": "Reconnecter l’installation existante et conserver ses données"
+        }
       }
     },
     "error": {
@@ -25,7 +32,8 @@
       "unsupported": "L’accès détecté ne fournit pas un historique Moonraker exploitable. Les ports essayés sont 80 et 7125.",
       "invalid_auth": "La clé n’est pas acceptée par Moonraker.",
       "invalid_name": "Indiquez un nom de 1 à 80 caractères.",
-      "invalid_date": "Indiquez une date valide qui ne soit pas dans le futur."
+      "invalid_date": "Indiquez une date valide qui ne soit pas dans le futur.",
+      "confirm_required": "Confirmez la reconnexion de l’installation existante."
     },
     "abort": {
       "already_configured": "Cette IP est déjà configurée. Pour une IP modifiée, utilisez Reconfigurer sur l’intégration existante.",

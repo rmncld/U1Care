@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="192" viewBox="-4 -8 32 52"><title>Snapmaker U1 toolhead — U1Deck illustration</title><g transform="translate(0 0) scale(1)" data-head="1" data-mounted="false">
+ <defs><linearGradient id="u1care-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ececec"/><stop offset=".28" stop-color="#a6a6a6"/><stop offset=".65" stop-color="#dddddd"/><stop offset="1" stop-color="#747474"/></linearGradient><linearGradient id="u1care-shell"><stop stop-color="#444444"/><stop offset="1" stop-color="#131313"/></linearGradient></defs>
+ 
+ <path d="M8 0V-4H16V0" fill="none" stroke="#8b8b8b" stroke-width="2"/>
+ <path d="M3 1 19 0 24 4 24 29 20 33 3 32 0 28V5Z" fill="url(#u1care-shell)" stroke="#818181" stroke-width=".7"/>
+ <path d="M4 7H20V28L17 31H4Z" fill="url(#u1care-metal)" stroke="#d2d2d2" stroke-width=".5"/>
+ <path d="M20 7 23 5V28L20 31Z" fill="#636363"/>
+ <rect x="3" y="3" width="17" height="3" rx="1" fill="#9ca3af" stroke="#f6f6f6" stroke-opacity=".35" stroke-width=".5"/>
+ <rect x="8" y="1" width="7" height="1.5" rx=".4" fill="#9f9f9f"/>
+ <g fill="#e1e1e1" stroke="#414141" stroke-width=".5"><circle cx="6" cy="10" r="1.2"/><circle cx="17.5" cy="10" r="1.2"/><circle cx="6" cy="25.8" r="1.2"/><circle cx="17.5" cy="25.8" r="1.2"/></g>
+ <g stroke="#424242" stroke-width=".45"><path d="M5.3 10H6.7M17 10H18M5.3 25.8H6.7M17 25.8H18"/></g>
+ <path d="M9 13H16V18H9ZM6 16H8V19H6" fill="#1b1b1b" stroke="#737373" stroke-width=".4"/>
+ <path d="M12 20 16 26H8Z" fill="#c7c7c7" stroke="#414141" stroke-width=".5"/>
+ <path d="M11 23Q10 22 11 21M13 24Q12 23 13 22" fill="none" stroke="#363636" stroke-width=".55"/>
+ <path d="M7 31H18V35H7Z" fill="#363636" stroke="#939393" stroke-width=".6"/><path d="M9 35H16V38L12.5 41 9 38Z" fill="#a0a0a0" stroke="#cbcbcb" stroke-width=".5"/>
+ <path d="M11 40H14" stroke="#9ca3af" stroke-width="1.4"/>
+ 
+ </g></svg>
